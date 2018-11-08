@@ -1,0 +1,3 @@
+#ignore compiled Python source files
+*.pyc
+/Tests/Output/*
