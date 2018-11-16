@@ -1,0 +1,108 @@
+@startuml structure_mapping_get_element
+
+title Activity Diagram of the Function fsio_lib.StructureMapping.GetElement()
+
+start
+
+:<b>Target</b> - (nested) container or structured object, including dictionaries and XML tree representation
+<b>Path</b> - a path or a single element of a path, an integer or string or a dictionary of string keys and numeric / boolean / string values or a (nested) sequence of these types<
+
+:unify <b>Path</b> using <b>FlattenPath</b>() function|
+
+:<b>CurrentLevel</b> = <b>Target</b> - top level;
+
+while (iterate through the <b>Path</b> list ->\n<b>PathElement</b> for each level)
+    if (<b>PathElement</b> is\na string?) then (Yes)
+        if (<b>CurrentLevel</b> is\nan XML tree node?) then (Yes)
+            :look for <b>PathElement</b>\namongst the special\nattributes, then sub-elements\nthen normal attributes]
+            
+            if (Found?) then (Yes)
+                :<b>CurrentLevel</b> <=\n<b>getattr(CurrentLevel, PathElement)</b>\n/\n<b>CurrentLevel.find(PathElement)</b>\n/\n<b>CurrentLevel.get(PathElement)</b> ;
+            else (No)
+                :raise\n<b>AttributeError</b> ;
+                
+                stop
+            endif
+        elseif (<b>CurrentLevel</b>\nis a dictionary?) then (Yes)
+            if (<b>CurrentLevel</b>\nhas <b>PathElement</b>\nkey?) then (True)
+                :<b>CurrentLevel</b> <=\n<b>CurrentLevel[PathElement]</b> ;
+            else (No)
+                :raise\n<b>AttributeError</b> ;
+                
+                stop
+            endif
+        else (No)
+            if (<b>CurrentLevel</b>\nhas <b>PathElement</b>\nattribute?) then (True)
+                :<b>CurrentLevel</b> <=\n<b>CurrentLevel.PathElement</b> ;
+            else (No)
+                :raise\n<b>AttributeError</b> ;
+                
+                stop
+            endif
+        endif
+    elseif (<b>PathElement</b> is\nan integer?) then (Yes)
+        if (<b>CurrentLevel</b> is\nan XML tree node\nor a sequence?) then (Yes)
+            :search element\nindex <b>PathElement</b>\nin the sequence or\namongst the sub-elements]
+        
+            if (Found?) then (Yes)
+                :<b>CurrentLevel</b> <=\n<b>list(CurrentLevel)[PathElement]</b> ;
+            else (No)
+                :raise\n<b>AttributeError</b> ;
+                
+                stop
+            endif
+        else (No)
+            :raise\n<b>AttributeError</b> ;
+                
+            stop
+        endif
+    elseif (<b>PathElement</b> is\na dictionary?) then (Yes)
+        if (<b>CurrentLevel</b> is\nan XML tree node\nor a sequence?) then (Yes)
+            :search though\n the sequence or\namongst the sub-elements]
+            
+            while (for eac <b>Item</b>\in <b>list(CurrentLevel)</b>)
+                if (<b>Item</b> has\nall keys from\n<b>PathElement</b>\nwith the same\nvalues?) then (Yes)
+                    :get index of <b>Item</b>\n-> <b>Index</b> ;
+                    
+                    :mark as found;
+                    
+                    :break the loop;
+                endif
+            end while
+            
+            if (Found?) then (Yes)
+                :<b>CurrentLevel</b> <=\n<b>list(CurrentLevel)[Index]</b> ;
+            else (No)
+                :raise\n<b>AttributeError</b> ;
+                
+                stop
+            endif
+        else (No)
+            :raise\n<b>AttributeError</b> ;
+                
+            stop
+        endif
+    else (No)
+        :raise\n<b>AttributeError</b> ;
+        
+        stop
+    endif
+end while
+
+if (<b>CurrentLevel</b> is a string?) then (True)
+    if (can be converted to integer?) then (Yes)
+        :<b>Result</b> <= int(<b>CurrentLevel</b>) ;
+    elseif (can be converted to float?) then (Yes)
+        :<b>Result</b> <= float(<b>CurrentLevel</b>) ;
+    else (No)
+        :<b>Result</b> <= <b>CurrentLevel</b> ;
+    endif
+else (False)
+    :<b>Result</b> <= <b>CurrentLevel</b> ;
+endif
+
+:return <b>Result</b> >
+
+stop
+
+@enduml

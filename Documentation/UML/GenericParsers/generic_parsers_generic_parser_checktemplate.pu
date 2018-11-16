@@ -1,0 +1,19 @@
+@startuml generic_parsers_generic_parser_checktemplate
+
+title Activity Diagram of the Method fsio_lib.GenericParsers.GenericParser._checkTemplate()
+
+start
+
+:<b>Template</b> - check value, supposedly a file parsing template<
+
+if (<b>Template</b> is a dictionary?) then (No)
+    :raise TypeError;
+elseif (<b>Template</b> has a key "DataMapping"?) then (No)
+    :raise ValueError;
+elseif (<b>Template</b>["DataMapping"] is a dictionary?) then (No)
+    :raise ValueError;
+endif
+
+stop
+
+@enduml

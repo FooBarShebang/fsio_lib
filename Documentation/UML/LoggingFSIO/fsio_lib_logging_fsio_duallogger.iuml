@@ -1,0 +1,15 @@
+!define UTILS_LOGGERS_DUALLOGGER
+
+class DualLogger {
+    + file_logging: logging.FileHandler OR logging.NullHandler
+    + log_file: str
+    __
+    + _ _init_ _(): str/, bool, str, int/ -> None
+    + setFileLoggingLevel(): int -> None
+    + enableFileLogging(): None -> None
+    + disableFileLogging(): None -> None
+    + changeLogFile(): /str/ -> None
+    ..Special methods..
+    # _setFormatWithLineCode(): str, str, int, str -> None
+    # _setFormatNoLineCode(): None -> None
+}

@@ -1,0 +1,57 @@
+@startuml structure_mapping_use_case
+
+!ifndef GENERAL
+!include ../Templates/General_templates.cuml
+!endif
+
+title Use Case Diagram of the Module fsio_lib.StructureMapping. GENERATED
+
+actor "Mapping Definition File" <<JSON>> as Definition
+
+usecase "Loading of\nmapping definition" as Loading
+
+Definition -- Loading
+
+usecase "Parsing of\ndata file" as Parsing
+
+Loading --> Parsing : extends
+
+actor "Mapping Definition" <<dictionary>> as MapDict
+
+Loading ..> MapDict : generates
+
+actor "fsio_lib.StructureMapping.LoadDefinition" <<function>> as Loader
+
+Loading - Loader
+
+actor "Data File" <<JSON/XML/TSV...>> as Data
+
+Data -- Parsing
+
+actor Parser <<function / method>>
+
+Parser - Parsing
+
+Parsing -[hidden] MapDict
+
+usecase "Mapping of\nthe data" as Mapping
+
+Parsing <-- Mapping : extends
+
+MapDict -- Mapping
+
+actor "Data from file" <<Standard Python object>> as DataObject
+
+Parsing ..> DataObject : generates
+
+DataObject - Mapping
+
+actor "fsio_lib.StructureMapping.MapValues" <<function>> as Mapper
+
+Mapping - Mapper
+
+actor "User object" <<object>> as UserData
+
+Mapping -- UserData
+
+@enduml

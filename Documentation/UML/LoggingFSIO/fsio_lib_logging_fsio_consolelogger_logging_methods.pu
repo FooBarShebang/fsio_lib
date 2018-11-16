@@ -1,0 +1,25 @@
+@startuml fsio_lib_logging_fsio_consolelogger_logging_methods
+
+title Activity Diagram of the ConsoleLogger Logging Methods
+
+start
+
+:<b>Level</b> - integer severity level, defined by the used method
+<b>Message</b> - string, log message<
+
+if (<b>Level</b> <= DEBUG) then (Yes)
+    :log the message using the default
+    2-lines format;
+else (No)
+    :switch all handlers to the 3-lines format
+    using _setFormatWithLineCode() ]
+    
+    :log the message using the 3-lines format;
+    
+    :switch all handlers to the 2-lines format
+    using _setFormatNoLineCode() ]
+endif
+
+stop
+
+@enduml

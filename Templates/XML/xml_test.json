@@ -1,0 +1,13 @@
+{
+    "Type" : "XML",
+    "Software" : "UnitTest",
+    "TargetClassModule" : "fsio_lib.Tests.ut004_helper_class",
+    "TargetClass" : "HelperClass",
+    "DataMapping" : {
+        "report" : {
+            "id" : "node.id",
+            "type" : "node.type"
+        },
+        "result" : ["node", {"result" : "PASS"}, "value"]
+    }
+}

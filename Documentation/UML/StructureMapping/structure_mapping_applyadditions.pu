@@ -1,0 +1,33 @@
+@startuml structure_mapping_applyadditions
+
+title Activity Diagram of the Function fsio_lib.StructureMapping._ApplyAdditions()
+
+start
+
+:<b>Rules</b> - dictionary of the mapping rules<
+
+:select all addition rules names (keys) from <b>Rules</b> dictionary -> <b>Keys</b> list;
+
+while (for each <b>Key</b> in <b>Keys</b>)
+    :get mapping rules paths pairs <b>GetPathPairs(Rules[Key])</b> -> <b>Pairs</b> list of tuples;
+    while (for each <b>TargetPath, SourcePath</b> in <b>Pairs</b>)
+        :select the 'direct' mapping rules dictionary corresponding to\n<b>Key[1:]</b> from <b>Rules</b> dictionary -> <b>Target</b> dictionary;
+        while (for each <b>Item</b> in <b>TargetPath</b> except the last)
+            if (<b>Item</b> is not a key in <b>Target</b>?) then (True)
+                :add empty nested dictionary to <b>Target</b> at key <b>Item</b>;
+            endif
+            
+            :walk down to the next element <b>Target[Item]</b> -> <b>Target</b> ;
+        end while
+        
+        :set or append <b>TargetPath[-1] : SourcePath</b>\nelement of <b>Target</b>, i.e. using the last element in\n<b>TargetPath</b> as the key;
+    end while
+end while
+
+while (for each <b>Key</b> in <b>Keys</b>)
+    :delete entry with the key <b>Key</b> from <b>Rules</b> ;
+end while
+
+stop
+
+@enduml

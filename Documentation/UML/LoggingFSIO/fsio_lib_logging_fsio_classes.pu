@@ -1,0 +1,109 @@
+@startuml fsio_lib_logging_fsio_classes
+
+!ifndef GENERAL
+!include ../Templates/General_templates.cuml
+!endif
+
+!ifndef CLASSES
+!include ../Templates/Class_templates.cuml
+!endif
+
+title Class Diagram of the Module fsio_lib.LoggingFSIO. GENERATED
+
+!ifndef LOGGINGFSIO
+!include ./fsio_lib_logging_fsio_loggingfsio.iuml
+!endif
+
+!ifndef UTILS_LOGGERS_CONSOLELOGGER
+!include ./fsio_lib_logging_fsio_consolelogger.iuml
+!endif
+
+!ifndef UTILS_LOGGERS_DUALLOGGER
+!include ./fsio_lib_logging_fsio_duallogger.iuml
+!endif
+
+namespace datetime <<Standard Python Library>> {
+    class "datetime" as DT {
+        ___
+       + now() : None -> datetime.datetime
+       + strftime() : str -> str
+    }
+}
+
+namespace logging <<Standard Python Library>> {
+    class Formatter
+    
+    class Handler <<PROTOTYPE>> {
+    + level : int
+    ___
+    + setLevel() : int -> None
+    + setFormatter() : logging.Formatter
+    + flush() : None -> None
+    + close() : None -> None
+    }
+    
+    Handler o.. "0..n" Formatter
+    
+    class Logger {
+     + name : str
+     + level : int
+     + parent : logging.Logger OR logging.RootLogger OR None
+     {field} + handlers : list('logging.Handler)
+     + disabled : int
+     + propagate : int
+     + formatter : logging.Formatter OR None
+     ___
+     + setLevel() : int -> None
+     + addHandler() : logging.Handler -> None
+     + removeHandler() : logging.Handler -> None
+     + debug() : str -> None
+     + info() : str -> None
+     + warning() : str -> None
+     + error() : str -> None
+     + exception() : str -> None
+     + critical() : str -> None
+     ...
+    }
+    
+    Handler "0..n" .o Logger
+    
+    class NullHandler
+    
+    Handler <|-- NullHandler
+    
+    class StreamHandler
+    
+    Handler <|-- StreamHandler
+    
+    StreamHandler -[hidden]right NullHandler
+    
+    class FileHandler
+    
+    Logger -[hidden]- Formatter
+    
+    NullHandler -[hidden]right Formatter
+    
+    StreamHandler <|-- FileHandler
+  }
+
+logging.FileHandler "0..1" --o DualLogger
+
+logging.StreamHandler "1" --o ConsoleLogger
+
+logging.NullHandler "1" --o ConsoleLogger
+
+logging.Logger "1" <|--o ConsoleLogger : emulates\ninheritance
+
+DualLogger -|> ConsoleLogger
+
+logging.Formatter "1" --o ConsoleLogger
+
+datetime.DT <-- DualLogger : uses
+
+datetime.DT -[hidden] logging.FileHandler
+
+logging.NullHandler "0..1" --o DualLogger : instead of\nlogging.FileNandler
+
+LoggingFSIO o- "1" DualLogger
+
+@enduml

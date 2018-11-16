@@ -1,0 +1,6 @@
+{
+    "INCLUDES" : {"#1" : "bad_1.json",
+                    "#2" : ["good_2.json", "d"]},
+    "rule_1" : "#1",
+    "rule_2" : "#2"
+}

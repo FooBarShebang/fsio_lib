@@ -1,0 +1,6 @@
+<dummyzero>
+    <node id="1" type="dummy">
+        <test result="FAIL" value = "0" />
+        <test result="PASS" value = "1" />
+    </node>
+</dummyzero>

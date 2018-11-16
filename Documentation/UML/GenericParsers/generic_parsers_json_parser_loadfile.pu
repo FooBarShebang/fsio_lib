@@ -1,0 +1,73 @@
+@startuml generic_parsers_json_parser_loadfile
+
+title Activity Diagram of the Method fsio_lib.GenericParsers.JSON_Parser._loadFile()
+
+start
+
+:<b>FileName</b> - str, path to a file to process
+<b>Hints</b> - dictionary of the file loading hints
+<b>Logger</b> - (optional) logger object with the standard API, defaults to None<
+
+if (in <b>try:...</b>) then (no exceptions)
+    :load entire content of <b>FileName</b> into <b>Buffer</b> string]
+    
+    :replace all "$" by "%" in the <b>Buffer</b> string;
+else (Exception)
+    if (<b>Logger</b> is provided (not None)?) then (True)
+        :log the exception type and message as ERROR;
+    endif
+    
+    :re-raise exception;
+    
+    stop
+endif
+
+:<b>Counter</b> = 0 - to count the found braces;
+
+while (for each <b>Index, Char</b> in enumeration of <b>Buffer</b>)
+    if (<b>Char</b> == '{'?) then (Yes)
+        if (<b>Counter</b> == 0?) then (True)
+            :rememeber <b>Index</b> value -> <b>Start</b> ;
+        endif
+        :increment <b>Counter</b>;
+    elseif (<b>Char</b> == '}'?) then (Yes)
+        if (<b>Counter</b> <= 0?) then (True)
+            if (<b>Logger</b> is provided (not None)?) then (True)
+                :log the problem as ERROR;
+            endif
+            
+            :raise ValueError;
+            
+            stop
+        else (False)
+            :decrement <b>Counter</b>;
+        endif
+        
+        if (<b>Counter</b> <= 0?) then (True)
+            :append tuple (<b>Start, Index</b>) into <b>Temp</b> list of position pairs;
+        endif
+    endif
+end while
+
+if (in <b>try:...</b>) then (no exceptions)
+    while (for each <b>Start, Stop</b> pair in <b>Temp</b>)
+        :load a JSON object from a substring <b>json.loads(Buffer[Start : Stop + 1])</b> -> <b>Item</b> ]
+        
+        :append <b>Item</b> into the <b>Result</b> list;
+    end while
+    
+    :return <b>Result</b> list>
+    
+    stop
+else (Exception)
+    if (<b>Logger</b> is provided (not None)?) then (True)
+        :log the exception type and message as ERROR;
+    endif
+    
+    :re-raise exception;
+    
+    stop
+endif
+
+
+@enduml

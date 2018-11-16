@@ -1,0 +1,46 @@
+@startuml structure_mapping_getpathpairs
+
+title Activity Diagram of the Function fsio_lib.StructureMapping._GetPathPairs()
+
+start
+
+:<b>Rules</b> - dicitonary of the mapping Rules
+<b>LastPath</b> - (optional) list of the already extracted target path elements, only for recursion implementation<
+
+if (<b>LastPath</b> is provided?) then (Yes)
+    :copy <b>LastPath</b> into <b>TargetPath</b> list;
+else (No)
+    :<b>TargetPath</b> is empty list;
+endif
+
+while (for each <b>Key, Value</b> in <b>Rules</b>)
+    if (if <b>Key</b> is <b>ProperKey</b> or non-negative integer?) then (True)
+        :copy <b>TargetPath</b> into <b>TempPath</b> list;
+        
+        if (<b>Key</b> is <b>NumberString</b>?) then (Yes)
+            :append <b>int(Key)</b> into <b>TempPath</b>;
+        else (No)
+            :append <b>Key</b> into <b>TempPath</b>;
+        endif
+        
+        if (<b>Value</b> is a dictionary?) then (Yes)
+            :make recursive call to <b>GetPathPairs(Value, TempPath)</b>\n-> add the returned list to <b>Result</b> list|
+        else (No)
+            :flatten <b>TempPath</b> using <b>FlattenPath</b>() -> <b>TPath</b> |
+            
+            :flatten <b>Value</b> using <b>FlattenPath</b>() -> <b>SPath</b> |
+            
+            :append tuple <b>(TPath, SPath)</b> into <b>Result</b> list;
+        endif
+    else (False)
+        :<b>LogRaise</b>() as ValueError|
+        
+        stop
+    endif
+end while
+
+:return <b>Result</b> list>
+
+stop
+
+@enduml

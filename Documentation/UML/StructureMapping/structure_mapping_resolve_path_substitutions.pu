@@ -1,0 +1,70 @@
+@startuml structure_mapping_resolve_path_substitutions
+
+title Activity Diagram of the Function fsio_lib.StructureMapping.ResolvePathSubstitutions()
+
+start
+
+:<b>Paths</b> - dictionary of the path substituion definitions to be resolved<
+
+if (<b>Paths</b> is dictionary?) then (Yes)
+    :make empty dicitonaries <b>Resolved</b> and <b>Unresolved</b> ;
+    
+    while (for each <b>Key, Value</b> in <b>Paths</b>)
+        if (<b>Key</b> is not a string?) then (True)
+            :raise TypeError;
+    
+            stop
+        elseif (<b>Key</b> does not start with '$' OR is '$'?) then (True)
+            :raise ValueError;
+    
+            stop
+        else (False)
+            :Flatten / unify path given by <b>Value</b>, see function FlattenPath() -> <b>Unified</b> ]
+        endif
+        
+        if (Unified path contains at least one '$'-pattern?) then (Yes)
+            if (Has at least one '$'-pattern not present in <b>Paths</b> keys?) then (Yes)
+                :raise ValueError;
+    
+                stop
+            else (No)
+                :Append <b>Key : Unified</b> pair to <b>Unresolved</b> dictionary;
+            endif
+        else (No)
+            :Append <b>Key : Unified</b> pair to <b>Resolved</b> dictionary;
+        endif
+    end while
+else (No)
+    :raise TypeError;
+    
+    stop
+endif
+
+while (while <b>Unresolved</b> dictionary is not empty)
+    while (for each <b>Key, Value</b> in <b>Unresolved</b>)
+        while (for each <b>Item</b> in <b>Value</b> list)
+            if (<b>Item</b> is in <b>Resolved</b> dictionary?) then (Yes)
+                :replace <b>Item</b> by <b>Resolved[Item]</b>;
+            endif
+        end while
+        
+        :Flatten / unify path given by <b>Value</b>, see function FlattenPath() -> <b>Value</b> ]
+        
+        if (<b>Value</b> has no '$'-patterns any more?) then (True)
+            :Replace <b>Key : Value</b> pair from <b>Unresolved</b> into <b>Resolved</b> dictionary;
+        endif
+        
+    end while
+    
+    if (Not a single pattern has been resolved during the itteration?) then (True)
+        :raise ValueError;
+    
+        stop
+    endif
+end while
+
+:return <b>Resolved</b> dictionary>
+
+stop
+
+@enduml

@@ -1,0 +1,27 @@
+@startuml structure_mapping_selectdirectrules
+
+title Activity Diagram of the Function fsio_lib.StructureMapping._SelectDirectRules()
+
+start
+
+:<b>Buffer</b> - dictionary, data loaded from a JSON file<
+
+while (for each <b>Key, Value</b> in <b>Buffer</b>)
+    if (<b>Key</b> is non-empty string and not <b>PathKey</b> or <b>IncludeKey</b> or <b>AdditionKey</b> or <b>RemovalKey</b>?) then (True)
+        if (<b>Value</b> is a dictionary?) then (True)
+            :insert <b>Key : Value</b> entry into <b>Result</b> dictionary;
+        elseif (<b>Value</b> is <b>IncludeKey</b>?) then (True)
+            :insert <b>Key : Value</b> entry into <b>Result</b> dictionary;
+        endif
+    endif
+end while
+
+while (for each <b>Key</b> in <b>Result</b>)
+    :delete entry bound to <b>Key</b> from <b>Buffer</b> dictionary;
+end while
+
+:return <b>Result</b> dictionary>
+
+stop
+
+@enduml

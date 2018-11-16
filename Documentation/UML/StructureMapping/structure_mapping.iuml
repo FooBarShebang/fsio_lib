@@ -1,0 +1,56 @@
+!define STRUCTUREMAPPING
+
+!ifndef COMPONENTS
+!include ../Templates/Components.cuml
+!endif
+
+module(StructureMapping) {
+    function(ResolvePathSubstitutions)
+    
+    function(LoadDefinition)
+    
+    ResolvePathSubstitutions -right-> LoadDefinition
+    
+    function(DeleteElement)
+    
+    LoadDefinition -down-> DeleteElement
+    
+    function(FlattenPath)
+    
+    DeleteElement -right-> FlattenPath
+    
+    LoadDefinition -down-> FlattenPath
+    
+    ResolvePathSubstitutions -down-> FlattenPath
+    
+    ResolvePathSubstitutions -[hidden]- DeleteElement
+    
+    function(GetElement)
+    
+    DeleteElement -down-> GetElement
+    
+    FlattenPath <-down- GetElement
+    
+    function(SetElement)
+    
+    FlattenPath <-down- SetElement
+    
+    GetElement <-right- SetElement
+    
+    function(AddElement)
+    
+    FlattenPath <-right- AddElement
+    
+    
+    LoadDefinition -down-> AddElement
+    
+    AddElement -down-> SetElement
+    
+    AddElement -down-> GetElement
+    
+    function(MapValues)
+    
+    GetElement <-down- MapValues
+    
+    SetElement <-down- MapValues
+}

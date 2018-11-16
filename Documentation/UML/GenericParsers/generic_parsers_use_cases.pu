@@ -1,0 +1,127 @@
+@startuml generic_parsers_use_cases
+
+actor "StructureMapping.LoadDefinition" <<function>> as LoadDefinition
+
+usecase "Data mapping" as DataMapping
+
+LoadDefinition -[hidden] DataMapping
+
+actor "StructureMapping.MapValues" <<function>> as MapValues
+
+DataMapping - MapValues
+
+actor "Standard / User Parser" <<function>> as StandardParser
+
+MapValues -[hidden] StandardParser
+
+usecase "Load mapping rules" as LoadRules
+
+LoadDefinition -- LoadRules
+
+actor MappingRules <<dictionary>>
+
+LoadRules ~> MappingRules : generates
+
+DataMapping -- MappingRules
+
+actor TargetObject <<structure>>
+
+MappingRules -[hidden] TargetObject
+
+DataMapping -- TargetObject
+
+actor SourceObject <<structure>>
+
+TargetObject -[hidden] SourceObject
+
+DataMapping -- SourceObject
+
+usecase "Data file loading" as LoadData
+
+SourceObject <~ LoadData : generates
+
+MapValues -[hidden]- LoadData
+
+StandardParser -- LoadData
+
+actor MappingDefinition <<file>>
+
+MappingDefinition -- LoadRules
+
+MappingDefinition -[hidden] LoadDefinition
+
+actor ParsingTemplate <<dictionary>>
+
+LoadRules ~~> ParsingTemplate : generates
+
+usecase "Parsing with template and target class" as ParsingBoth
+
+ParsingTemplate - ParsingBoth
+
+MappingRules <~~ ParsingBoth : generates
+
+TargetObject <~~ ParsingBoth : generates
+
+SourceObject -[hidden]- ParsingBoth
+
+LoadData <|-- ParsingBoth : extends
+
+actor DataFile <<file>>
+
+ParsingBoth - DataFile
+
+LoadData -- DataFile
+
+usecase "Parsing with target class only" as ParsingClass
+
+ParsingBoth <|-- ParsingClass : extends
+
+usecase "Parsing with template only" as ParsingWTemplate
+
+ParsingClass -[hidden]- ParsingWTemplate
+
+ParsingBoth <|-- ParsingWTemplate : extends
+
+ParsingTemplate - ParsingWTemplate
+
+actor TargetType <<class / type>>
+
+ParsingBoth - TargetType
+
+ParsingClass - TargetType
+
+ParsingClass - DataFile
+
+ParsingWTemplate - DataFile
+
+usecase "Specific automatic parsing" as ParsingAuto
+
+ParsingWTemplate <|-- ParsingAuto : extends
+
+ParsingClass <|-- ParsingAuto : extends
+
+LoadRules <|-- ParsingAuto : extends
+
+ParsingAuto - DataFile
+
+actor SpecificParser <<class>>
+
+SpecificParser - ParsingBoth
+
+SpecificParser - ParsingClass
+
+SpecificParser - ParsingWTemplate
+
+SpecificParser - ParsingAuto
+
+actor AutoParser <<function>>
+
+usecase "Automatic parsing" as FullAuto
+
+FullAuto - AutoParser
+
+ParsingAuto <|-- FullAuto : extends
+
+SpecificParser <~~ FullAuto : uses
+
+@enduml

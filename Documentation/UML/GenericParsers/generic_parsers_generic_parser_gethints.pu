@@ -1,0 +1,40 @@
+@startuml generic_parsers_generic_parser_gethints
+
+title Activity Diagram of the Method fsio_lib.GenericParsers.GenericParser._getHints()
+
+start
+
+:<b>Data</b> - any type, the a complete data object read from a file
+<b>Template</b> - (optional) dictionary, the file parsing template, default is None<
+
+:initialize <b>Hints</b> as an empty dicitonary;
+
+if (<b>Data</b> is None AND <b>Template</b> is None?) then (True)
+    :raise ValueError;
+    
+    stop
+elseif (<b>Template</b> is NOT None) then (True)
+    :check that <b>Template</b> is a proper dictionary <b>_checkTemplate</b> |
+    
+    if ("HeaderOffset" is in <b>Template</b>?) then (Yes)
+        :<b>Hints</b>["HeaderOffset"] = <b>Template</b>["HeaderOffset"] ;
+    else (No)
+        :<b>Hints</b>["HeaderOffset"] = None ;
+    endif
+    
+    if ("TestClassModule" is in <b>Template</b> AND "TestClass" is in <b>Template</b>?) then (Yes)
+        :<b>ImportModule</b> = <b>Template</b>["TestClassModule"];
+        
+        :<b>ImportClass</b> = <b>Template</b>["Test"];
+        
+        :<b>Hints</b>["TestClass"] = <b>dynamic_import.import_from_module(ImportModule, ImportClass)</b> ;
+    else (No)
+        :<b>Hints</b>["TestClass"] = None ;
+    endif
+endif
+
+:return <b>Hints</b> dictionary>
+
+stop
+
+@enduml

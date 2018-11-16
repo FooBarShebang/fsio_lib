@@ -1,0 +1,75 @@
+@startuml structure_mapping_map_values
+
+title Activity Diagram of the Function fsio_lib.StructureMapping.MapValues()
+
+start
+
+:<b>Target</b> - the target object
+<b>Source</b> - the source object
+<b>Rules</b> - dictionary, the source -> target mapping Rules
+<b>Logger</b> - (optional) logger object
+<b>StrictTarget</b> - (optional) boolean flag if to use strict mode for target, defaults to True
+<b>StrictSource</b> - (optional) boolean flag if to use strict mode for source, defaults to True
+<b>Forced</b> - (optional) boolean flag if to attempt to insert the missing elements in the target object, defaults to False<
+
+if (<b>Rules</b> is dictionary?) then (True)
+    :flatten dictionary and do sanity checks using <b>GetPathsPairs</b>(<b>Rules</b>) -> <b>Paths</b> |
+    
+    if (Error - exception raised?) then (Yes)
+        while (for each <b>TargetPath, SourcePath</b> in <b>Paths</b>)
+            :get source element value using\n<b>GetElement(Source, SourcePath)</b> -> <b>Value</b> ;
+            
+            if (TypeError / ValueError raised?) then (Yes)
+                :re-raise the exception;
+                
+                stop
+            elseif (AttributeError is raised?) then (No)
+                :set target element value using\n<b>SetElement(Target, TargetPath, Value)</b> ;
+                
+                if (TypeError / ValueError raised??) then (True)
+                    :re-raise the exception;
+                    
+                    stop
+                elseif (AttributeError is raised?) then (Yes)
+                    if (is <b>StrictTarget</b>?) then (True)
+                        :re-raise the exception;
+                        
+                        stop
+                    else (False)
+                        :issue warning on\nfailed operation\nif <b>Logger</b> is\nprovided;
+                        
+                        :create target element value using\n<b>AddElement(Target, TargetPath, Value)</b> ;
+                        
+                        if (Error - any exception is raised?) then (No)
+                            :issue warning on\ninserted element\nif <b>Logger</b> is\nprovided;
+                        else (Yes)
+                            :re-raise the exception;
+                            
+                            stop
+                        endif
+                    endif
+                endif
+            else (Yes)
+                if (is StrictSource?) then (No)
+                    :issue warning\nif <b>Logger</b> is\nprovided;
+                else (Yes)
+                    :re-raise the exception;
+                    
+                    stop
+                endif
+            endif
+        end while
+        
+        stop
+    else (Yes)
+        :re-raise the exception;
+    
+        stop
+    endif
+else (False)
+    :raise TypeError;
+    
+    stop
+endif
+
+@enduml

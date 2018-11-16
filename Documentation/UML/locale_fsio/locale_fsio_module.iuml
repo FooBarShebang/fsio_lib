@@ -1,0 +1,27 @@
+!define LOCALEFSIO
+
+!ifndef COMPONENTS
+!include ../Templates/Components.cuml
+!endif
+
+module(locale_fsio) {
+    function(SaveForcedNewLine)
+    
+    function(LoadTable)
+    
+    function(LoadLines)
+    
+    function(SplitLine)
+    
+    function(DetectNotation)
+    
+    function(ConvertFromString)
+    
+    LoadTable --> LoadLines
+    
+    LoadTable --> SplitLine
+    
+    LoadTable --> DetectNotation
+    
+    LoadTable --> ConvertFromString
+}

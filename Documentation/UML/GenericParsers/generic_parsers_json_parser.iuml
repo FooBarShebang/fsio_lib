@@ -1,0 +1,13 @@
+!define GENERICPARSERSJSONPARSER
+
+!ifndef CLASSES
+!include ../Templates/Class_templates.cuml
+!endif
+
+class JSON_Parser <<SINGLETON>> {
+    # static_field(_TemplatesIndex) : dict
+    # static_field(_SearchIndex) : dict
+    # static_field(_Type) : str = "JSON"
+    # static_method(_loadFile): str, dict/, logging.Logger OR `LoggingFSIO.ConsoleLogger/ -> list(type A)
+    # static_method(_getHints): type A/, dict/ -> dict
+}

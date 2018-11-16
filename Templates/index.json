@@ -1,0 +1,14 @@
+[
+    {
+        "Type" : "XML",
+        "Software" : "UnitTest",
+        "Mode" : "dummy",
+        "BaseName" : "xml_test.json"
+    },
+    {
+        "Type" : "JSON",
+        "Software" : "UnitTest",
+        "Mode" : "dummy",
+        "BaseName" : "json_test.json"
+    }
+]

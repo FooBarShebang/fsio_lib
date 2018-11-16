@@ -1,0 +1,79 @@
+@startuml fsio_lib_components
+
+!ifndef GENERAL
+!include ./Templates/General_templates.cuml
+!endif
+
+!ifndef COMPONENTS
+!include ./Templates/Components.cuml
+!endif
+
+title Components Diagram of the Library fsio_lib. GENERATED
+
+!ifndef GENERICPARSERS
+!include ./GenericParsers/GenericParsers.iuml
+!endif
+
+!ifndef STRUCTUREMAPPING
+!include ./StructureMapping/structure_mapping.iuml
+!endif
+
+!ifndef LOGGINGFSIO
+!include ./LoggingFSIO/LoggingFSIO_module.iuml
+!endif
+
+!ifndef LOCALEFSIO
+!include ./locale_fsio/locale_fsio_module.iuml
+!endif
+
+!ifndef DYNAMICIMPORT
+!include ./dynamic_import/dynamic_import_module.iuml
+!endif
+
+LoadDefinition -down-> DualLogger : uses
+
+DualLogger <-down- MapValues : uses
+
+StructureMapping <-down- Generic_Parser : uses
+
+DualLogger <-down- Generic_Parser : uses
+
+dynamic_import <-- GenericParsers : uses
+
+folder Templates {
+    folder TSV {
+        [TSV templates]
+    }
+    
+    folder JSON {
+        [JSON templates]
+    }
+    
+    folder XML {
+     [XML templates]
+    }
+    
+    TSV -[hidden] XML
+    
+    XML -[hidden] JSON
+    
+    file("index.json", Index)
+    
+    file("json_search_index.json", JsonIndex)
+    
+    file("xml_search_index.json", XMLIndex)
+    
+    JSON -[hidden]- Index
+    
+    Index -[hidden] JsonIndex
+    
+    JsonIndex -[hidden] XMLIndex
+}
+
+Generic_Parser -down-> Templates  : uses
+
+MapValues -[hidden]- [TSV templates]
+
+TSV_Parser --> LoadTable : uses
+
+@enduml

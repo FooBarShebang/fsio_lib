@@ -1,0 +1,15 @@
+!define GENERICPARSERSGENERICPARSER
+
+!ifndef CLASSES
+!include ../Templates/Class_templates.cuml
+!endif
+
+class GenericParser <<PROTOTYPE>> {
+    # static_method(_loadFile): str, dict/, logging.Logger OR `LoggingFSIO.ConsoleLogger/ -> list(type A)
+    # static_method(_getHints): type A/, dict/ -> dict
+    # static_method(_checkFile): str -> None
+    # static_method(_checkTemplate): dict -> None
+    + static_method(parseSingleObject): type A, class B, dict/, logging.Logger OR `LoggingFSIO.ConsoleLogger, bool, bool, bool / -> type B
+    + static_method(parseFile): str/, class A, dict, logging.Logger OR `LoggingFSIO.ConsoleLogger, bool OR None, bool, bool / -> type A
+    + static_method(parseManyFiles): str, list(str)/, class A, dict, logging.Logger OR `LoggingFSIO.ConsoleLogger, bool OR None, bool, bool / -> type A
+}

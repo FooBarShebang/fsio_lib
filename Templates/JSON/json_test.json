@@ -1,0 +1,13 @@
+{
+    "Type" : "JSON",
+    "Software" : "UnitTest",
+    "TargetClassModule" : "fsio_lib.Tests.ut004_helper_class",
+    "TargetClass" : "HelperClass",
+    "DataMapping" : {
+        "report" : {
+            "id" : "dummy.id",
+            "type" : "dummy.type"
+        },
+        "result" : ["dummy.tests", {"result" : "PASS"}, "value"]
+    }
+}

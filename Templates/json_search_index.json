@@ -1,0 +1,13 @@
+[
+    {
+        "FixedTags" : {
+            "Software" : "UnitTest"
+            },
+        "Markers" : [
+            ["dummy", "dummy.type"]
+            ],
+        "SearchTags" : {
+            "Mode" : [["dummy.type"]]
+        }
+    }
+]

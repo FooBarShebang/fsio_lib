@@ -1,0 +1,5 @@
+{
+    "INCLUDES" : {"#1" : ["foo_bar.baz", 0]},
+    "rule_1" : "#1",
+    "rule_2" : "#2"
+}

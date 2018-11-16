@@ -1,0 +1,83 @@
+@startuml structure_mapping_load_definition
+
+title Activity Diagram of the Function fsio_lib.StructureMapping.LoadDefinition()
+
+start
+
+:<b>File</b> - str, path to the file to process
+<b>Logger</b> - a logger object<
+
+:load the <b>File</b> and process it as JSON -> <b>Buffer</b> object]
+
+if (Error - exception is raised?) then (True)
+    :<b>LogRaise</b>() as original error type|
+    
+    stop
+elseif (<b>Buffer</b> is not a dictionary?) then (True)
+    :<b>LogRaise</b>() as ValueError|
+    
+    stop
+else (False)
+    :<b>ExtractValueSubstitions</b> => perform all imports = value substitution resolution|
+    
+    :<b>ExtractPathSubstitions</b> => resolve all path substitutions|
+    
+    if (TypeError or ValueError is raised?) then (No)
+        :<b>ExtractExtras</b> => all entries, which must be not changed;
+        
+        :<b>ApplySubstitutions</b> => select all 'direct' mapping rules and incremental additions and apply values and path substitutions to them|
+        
+        :<b>ApplyAdditions</b> => add new mapping rules to the corresponding 'direct' rules dictionaries|
+        
+        :<b>SelectRemovalRules</b> => select all incremental removal rules|
+        
+        :<b>ApplyRemovals</b> => remove the required rules from the corresponding 'direct' rules dictionaries|
+        if (TypeError or ValueError or AttributeError is raised?) then (No)
+            :move all extracted 'extras' and mapping rules into the <b>Result</b> dictionary;
+            
+            :flatten the rules using <b>GetPathsPairs(Result)</b> function call|
+            
+            while (for each <b>SourcePath</b>)
+                if (contains any element starting with "$" or "#"?) then (True)
+                    :<b>LogRaise</b>() as ValueError|
+                    
+                    stop
+                endif
+            end while
+            
+            while (for each <b>Key, Value</b> entry remaining in <b>Buffer</b>)
+                if (<b>Key</b> is empty string or starts with "$" or "#"?) then (True)
+                    :<b>LogRaise</b>() as ValueError - wrong format|
+                    
+                    stop
+                endif
+                
+                if (<b>Value</b> is empty string or starts with "$"?) then (True)
+                    :<b>LogRaise</b>() as ValueError - wrong format|
+                    
+                    stop
+                endif
+            end while
+            
+            if (there are entries remaining in <b>Buffer</b>?) then (Yes)
+                :<b>LogRaise</b>() as ValueError - unsued entries|
+                    
+                stop
+            else (No)
+                :return <b>Result</b> dictionary>
+                
+                stop
+            endif
+        else (Yes)
+            :<b>LogRaise</b>() as ValueError|
+        
+            stop
+        endif
+    else (Yes)
+        :<b>LogRaise</b>() as ValueError|
+        
+        stop
+    endif
+endif
+
+@enduml

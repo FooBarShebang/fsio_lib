@@ -1,0 +1,41 @@
+@startuml locale_fsio_detect_notation
+
+title Activity Diagram of the Function fsio_lib.locale_fsio.DetectNotation()
+
+start
+
+:<b>Data</b> - sequence of str, data to be analyzed<
+
+:set all flags to False - <b>International, Dutch</b> and <b>PossiblyDutch</b> ;
+
+while (for each <b>Item</b> in <b>Data<b>) is (<b>International, Dutch</b> flags are False)
+    :match <b>Item</b> against regular expression patterns;
+    
+    if (Matches definitely international?) then (True)
+        :set <b>International</b> flag to True;
+        
+        :break the loop;
+    elseif (Matches definitely Dutch?) then (True)
+        :set <b>Dutch</b> flag to True;
+        
+        :break the loop;
+    elseif (Matches possibly Dutch?) then (True)
+        :set <b>PossiblyDutch</b> flag to True;
+    endif
+endwhile (forced or normal exit from the loop) 
+
+if (<b>International<b> is True?) then (True)
+    :<b>Code</b> = 0;
+elseif (<b>Dutch<b> is True?) then (True)
+    :<b>Code</b> = 1;
+elseif (<b>PossiblyDutch<b> is True?) then (True)
+    :<b>Code</b> = 1;
+else (False)
+    :<b>Code</b> = 0;
+endif
+
+:return <b>Code</b> >
+
+stop
+
+@enduml

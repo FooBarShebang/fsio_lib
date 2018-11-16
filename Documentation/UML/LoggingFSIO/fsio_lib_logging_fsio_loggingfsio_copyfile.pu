@@ -1,0 +1,109 @@
+@startuml fsio_lib_logging_fsio_loggingfsio_copyfile
+
+title Activity Diagram of the Class Method LoggingFSIO.copyFile()
+
+start
+
+:<b>Source</b> - string, relative or absolute path to the source file
+<b>Path</b> - optional string, relative or absolute path to the target folder OR None
+<b>Name</b> - optional string, the new base name of the file OR None<
+
+:<b>iError</b> = 0, <b>strError</b> = 'Ok';
+
+if (is <b>Source</b> not a string?) then (True)
+    :<b>iError</b> = 1,
+    <b>strError</b> is formed
+    correspondingly;
+    
+    :Log @ERROR <b>strError</b> ;
+elseif (is <b>Source</b> not a path\nto an existing file?) then (True)
+    :<b>iError</b> = 2,
+    <b>strError</b> is formed
+    correspondingly;
+    
+    :Log @ERROR <b>strError</b> ;
+elseif (are <b>Path</b> and <b>Name</b>\nboth None?) then (True)
+    :<b>iError</b> = 1,
+    <b>strError</b> is formed
+    correspondingly;
+    
+    :Log @ERROR <b>strError</b> ;
+elseif (is <b>Path</b> neither\nNone nor string?) then (True)
+    :<b>iError</b> = 1,
+    <b>strError</b> is formed
+    correspondingly;
+    
+    :Log @ERROR <b>strError</b> ;
+elseif (is <b>Name</b> neither\nNone nor string?) then (True)
+    :<b>iError</b> = 1,
+    <b>strError</b> is formed
+    correspondingly;
+    
+    :Log @ERROR <b>strError</b> ;
+else (No)
+    if (<b>Path</b> is a string?) then (True)
+        :check if such folder exists,
+        create one if required, see
+        method <b>makeDirs</b>()
+        -> <b>iError, strError</b> pair|
+    endif
+    
+    if (No errors, <b>iError</b> == 0?) then (True)
+        :convert <b>Source</b> into an absolute path;
+        
+        if (<b>Path</b> is None) then (True)
+            :use dirname() of <b>Source</b> as
+            the target folder;
+        else (False)
+            :covert <b>Path</b> into an
+            absolute path and use it as
+            the target folder;
+        endif
+        
+        if (<b>Name</b> is None) then (True)
+            :use basename() of <b>Source</b> as
+            the new file base name;
+        else (False)
+            :use <b>Name</b> as the
+            new file base name;
+        endif
+        
+        :construct the full target path from the
+        target folder name and the new file base name;
+        
+        if (<b>Source</b> and the new path are to the same file?) then (Yes)
+            :LOG @WARNING
+            that the file is not
+            copied onto itself;
+        else (No)
+            :use standard function <b>shutil.copy2</b>() to copy
+            the file from <b>Source</b> onto the new path;
+            
+            if (IOError or OSError\nis raised?) then (True)
+                :<b>iError</b> = 3,
+                <b>strError</b> is
+                formed correspondingly;
+    
+                :Log @ERROR <b>strError</b> ;
+            elseif (file is copied?) then (True)
+                :LOG @INFO
+                that the file
+                is copied;
+            else (No)
+                :<b>iError</b> = 4,
+                <b>strError</b> is
+                formed correspondingly;
+    
+                :Log @ERROR <b>strError</b> ;
+            endif
+        endif
+    else (False)
+        :Log @ERROR <b>strError</b> ;
+    endif
+endif
+
+:return <b>iError, strError</b> pair>
+
+stop
+
+@enduml

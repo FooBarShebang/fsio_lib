@@ -1,0 +1,82 @@
+@startuml structure_mapping_add_element
+
+title Activity Diagram of the Function fsio_lib.StructureMapping.AddElement()
+
+start
+
+:<b>Target</b> - (nested) container or structured object, including dictionaries and XML tree representation
+<b>Path</b> - a path or a single element of a path, an integer or string or a dictionary of string keys and numeric / boolean / string values or a (nested) sequence of these types
+<b>NewValue</b> - the value to be assinged to the element<
+
+if (<b>Path</b> is empty string, empty sequence or None?) then (Yes)
+    if (<b>Target</b>\nAND\n<b>NewValue</b>\nare XML nodes?) then (Yes)
+        :add new node at\nthe top level using\n<b>Target.append(NewValue)</b>;
+    else (No)
+        :raise\n<b>ValueError</b> ;
+    endif
+else (No)
+    :unify <b>Path</b> using <b>FlattenPath</b>() function|
+    
+    :try to set the value using <b>SetElement</b>(<b>Target, Path, NewValue</b>) function|
+    
+    if (<b>AttributeError</b> is raised?) then (No)
+        stop
+    else (Yes)
+        :find the 'branching' point as the longest part of the <b>Path</b> which is still valid using <b>GetElement</b>(<b>Target, Path[:Index]</b>) function -> <b>Index</b> and <b>CurrentLevel</b> ]
+        
+        :get the remaining 'missing' path as <b>MissingPath</b> <= <b>Path[Index:]</b> ;
+        
+        if (<b>MissingPath</b> contains only strings?) then (True)
+            if (<b>Target</b> is an XML node?) then (Yes)
+                if (<b>CurrentLevel</b> is an XML node?) then (Yes)
+                    :build a branch of nested\nXML nodes using the names in\n<b>MissingPath[:-1]</b> |
+                    
+                    if (<b>NewValue</b> is an XML Node?) then (True)
+                        :append sub-element with the\ntag <b>MissingPath[-1]</b>\nto the branch;
+                        
+                        :append <b>NewValue</b>\nsub-element to it\nas the deepest level;
+                    else (False)
+                        :add special / normal attribute\nwith the name <b>MissingPath[-1]</b>\nand str(<b>NewValue</b>) value\nto the deepest node\nusing setattr() / set();
+                    endif
+                    
+                    :append the built branch to <b>CurrentLevel</b> ;
+                else (No)
+                    :raise\n<b>AttributeError</b> ;
+                    
+                endif
+            else (No)
+                if (<b>CurrentLevel</b> is a sequence?) then (Yes)
+                    :build nested dict\nfrom names in\n<b>MissingPath[:-1]</b> ;
+                    
+                    :add key : Value pair\ninto the deepest dict\n<b>MissingPath[-1] % NewValue</b> ;
+                    
+                    :append built branch\nas the last element\ninto <b>CurrentLevel</b> ;
+                else (No)
+                    :build nested dict\nfrom names in\n<b>MissingPath[1:-1]</b> ;
+                    
+                    :add key : Value pair\ninto the deepest dict\n<b>MissingPath[-1] % NewValue</b> ;
+                    
+                    if (<b>CurrentLevel</b> is a dict?) then (True)
+                        :append the built branch\nas the value paired\nwith the key\n<b>MissingPath[0]</b>\ninto <b>CurrentLevel</b> ;
+                    else (False)
+                        :append the built branch\nas the value of the attribute\n<b>MissingPath[0]</b>\ninto <b>CurrentLevel</b> ;
+                    endif
+                endif
+                
+                if (<b>TypeError</b> or <AttributeError</b> raised?) then (Yes)
+                    :<b>CurrentLevel</b> is immutable;
+                    
+                    :raise <b>AttributeError</b> ;
+                endif
+            endif
+        else (False)
+            :raise\n<b>AttributeError</b> ;
+            
+            stop
+        endif
+    endif
+endif
+
+stop
+
+@enduml

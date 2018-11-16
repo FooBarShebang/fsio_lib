@@ -1,0 +1,24 @@
+!define LOGGINGFSIO
+
+!ifndef CLASSES
+!include ../Templates/Class_templates.cuml
+!endif
+
+class LoggingFSIO <<SINGLETON>> {
+    + static_field(Logger) : CustomLogger
+    + static_field(dictErrors) : dict(int : str)
+    ___
+    + static_method(makeDirs) : str -> int, str
+    + static_method(copyFile) : str\, str, str\ -> int, str
+    + static_method(deleteFile) : str -> int, str
+    + static_method(moveFile) : str, str\, str\ -> int, str
+    + static_method(renameFile) : str, str -> int, str
+    + static_method(setLoggingLevel) : int -> None
+    + static_method(setConsoleLoggingLevel) : int -> None
+    + static_method(setFileLoggingLevel) : int -> None
+    + static_method(changeLogFile) : /str/ -> None
+    + static_method(enableConsoleLogging) : None -> None
+    + static_method(disableConsoleLogging) : None -> None
+    + static_method(enableFileLogging) : None -> None
+    + static_method(disableFileLogging) : None -> None
+}

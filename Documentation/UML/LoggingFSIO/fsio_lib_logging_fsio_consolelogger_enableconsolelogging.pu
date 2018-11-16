@@ -1,0 +1,13 @@
+@startuml fsio_lib_logging_fsio_consolelogger_enableconsolelogging
+
+title Activity Diagram of the Method ConsoleLogger.enableConsoleLogging()
+
+start
+
+if (instance does not have the ascendant (parent) logger?) then (True)
+    :add handler referenced by self.console into self._logger referenced logger;
+endif
+
+stop
+
+@enduml

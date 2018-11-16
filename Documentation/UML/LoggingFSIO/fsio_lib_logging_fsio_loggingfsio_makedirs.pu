@@ -1,0 +1,50 @@
+@startuml fsio_lib_logging_fsio_loggingfsio_makedirs
+
+title Activity Diagram of the Class Method LoggingFSIO.makeDirs()
+
+start
+
+:<b>Path</b> - string, relative or absolute path to a folder<
+
+:<b>iError</b> = 0, <b>strError</b> = 'Ok';
+
+if (is <b>Path</b> a string?) then (Yes)
+    if (is <b>Path</b> a valid path to an existing folder?) then (Yes)
+        :Log @DEBUG
+        that the folder
+        exists already;
+    else (No)
+        :convert <b>Path</b> into an absolute path;
+        
+        :use os.makedirs() function to create all folders along the <b>Path</b> ]
+        
+        if (IOError or OSError exception is raised?) then (Yes)
+            :<b>iError</b> = 3,
+            <b>strError</b> is formed
+            correspondingly;
+    
+            :Log @ERROR <b>strError</b> ;
+        elseif (is <b>Path</b> now a valid path\nto an existing folder?) then (Yes)
+            :Log @INFO
+            that the folder
+            is created;
+        else (No)
+            :<b>iError</b> = 4,
+            <b>strError</b> is formed
+            correspondingly;
+    
+            :Log @ERROR <b>strError</b> ;
+        endif
+    endif
+else (No)
+    :<b>iError</b> = 1,
+    <b>strError</b> is formed correspondingly;
+    
+    :Log @ERROR <b>strError</b> ;
+endif
+
+:return <b>iError, strError</b> pair>
+
+stop
+
+@enduml

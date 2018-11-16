@@ -1,0 +1,63 @@
+@startuml structure_mapping_walkdict
+
+title Activity Diagram of the Function fsio_lib.StructureMapping._WalkDictionary()
+
+start
+
+:<b>Buffer</b> - dictionary, data loaded from a JSON file
+<b>Substitutions</b>- dictionary, the already resolved path and value substituions
+<b>FileName</b> - str, the name of the file being processed
+<b>Logger</b> - (optional) logger object with the standard interface, e.g. DualLogger<
+
+:get all keys in <b>Buffer</b> -> <b>Keys</b> list;
+
+while (for each <b>Key</b> in <b>Keys</b>)
+    if (<b>Key</b> is neither string nor integer?) then (Yes)
+        :<b>LogRaise</b>() as ValueError|
+        
+        stop
+    elseif (<b>Key</b> is negative integer?) then (Yes)
+        :<b>LogRaise</b>() as ValueError|
+        
+        stop
+    elseif (<b>Key</b> is a string but not <b>ProperKey</b>?) then (Yes)
+        :<b>LogRaise</b>() as ValueError|
+        
+        stop
+    elseif (<b>Key</b> is <b>NumberString</b>?) then (Yes)
+        :replace <b>Key : Value</b> entry in <b>Buffer</b>\nby <b>int(Key) : Value</b> entry;
+    endif
+end while
+
+:get all keys in <b>Buffer</b> -> <b>Keys</b> list;
+
+while (for each <b>Key</b> in <b>Keys</b>)
+    :get value of <b>Key</b> in <b>Buffer</b> -> <b>Value</b> ;
+    
+    if (<b>Value</b> is dictionary?) then (True)
+        :make recursive call to <b>_WalkDict</b>() with <b>Value</b> as argument|
+    elseif (<b>Value</b> is a string and a key in <b>Substitutions</b>?) then (True)
+        :replace <b>Value</b> by <b>Substitutions[Value]</b> in <b>Buffer</b> ;
+    else (False)
+        :flatten <b>Value</b> using <b>FlattenPath</b> -> <b>Path</b> list|
+        
+        while (for each <b>Item</b> in <b>Path</b>)
+            if (<b>item</b> is a string and a key in <b>Substitutions</b>?) then (True)
+                :replace <b>Item</b> by <b>Substitutions[Item]</b> in <b>Path</b> ;
+            endif
+        end while
+        
+        :flatten <b>Path</b> using <b>FlattenPath</b> -> <b>Path</b> list|
+        
+        :replace <b>Value</b> by <b>Path</b> in <b>Buffer</b> ;
+        if (Error - exception is raised?) then (Yes)
+            :<b>LogRaise</b>() as ValueError with the original exception type and message|
+            
+            stop
+        endif
+    endif
+end while
+
+stop
+
+@enduml

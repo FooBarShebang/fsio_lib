@@ -1,0 +1,75 @@
+@startuml structure_mapping_flatten_path
+
+title Activity Diagram of the Function fsio_lib.StructureMapping.FlattenPath()
+
+start
+
+:<b>Path</b> - element of / partial or complete path to an element / attribute<
+
+if (<b>Path</b> is a string?) then (Yes)
+    if (is '#' or '$'?) then (True)
+        :raise ValueError;
+        
+        stop
+    elseif (starts with '#' or '$'?) then (True)
+        :<b>Result</b> = [<b>Path</b>] ;
+    else (False)
+        :split <b>Path</b> into\nstrings sequence\nby '.';
+        
+        if (any element is\nan empty string?) then (True)
+            :raise ValueError;
+            
+            stop
+        else (False)
+            :store it in\n<b>Result</b> string;
+        endif
+    endif
+elseif (is an integer\nand not bool?) then (Yes)
+    if (<b>Path</b> < 0?) then (True)
+        :raise ValueError;
+            
+        stop
+    else (False)
+        :<b>Result</b> = [<b>Path</b>] ;
+    endif
+elseif (is a dictionary?) then (Yes)
+    if (is it empty?) then (Yes)
+        :raise ValueError;
+            
+        stop
+    else (No)
+        while (for each\n<b>Key, Value</b>\nin <b>Path</b>)
+            if (<b>Key</b> is not\na string OR\n<b>Value</b> is not\nstring, number\nor bool?) then (True)
+                :raise TypeError;
+            
+                stop
+            endif
+        end while
+        
+        :<b>Result</b> = [<b>Path</b>] ;
+    endif
+elseif (is a sequence?) then (Yes)
+    if (is it empty?) then (Yes)
+        :raise ValueError;
+            
+        stop
+    else (No)
+        :<b>Result</b> = [];
+        
+        while (for each\n<b>Element</b>\nin <b>Path</b>)
+            :make recursive call\nFlattenPath(<b>Element</b>)|
+            
+            :extend <b>Result</b>\nby the returned\nvalue;
+        end while
+    endif
+else (No)
+    :raise TypeError;
+            
+    stop
+endif
+
+:return <b>Result</b> list>
+
+stop
+
+@enduml

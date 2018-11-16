@@ -1,0 +1,52 @@
+@startuml fsio_lib_logging_fsio_consolelogger_getattribute
+
+title Activity Diagram of the Method ConsoleLogger._ _getattribute_ _()
+
+start
+
+:<b>Name</b> - string, name of the attribute to obtain<
+
+if (<b>Name</b> is '_ _dict_ _' OR '_ _class_ _' ?) then (True)
+    :obtain self.Name using
+    object._ _getattribute_ _() method
+    and store in <b>Result</b> object;
+else (False)
+    if (instance (self) or its class or any of\nits super classes has Name attribute?) then (True)
+        :obtain self.Name using
+        object._ _getattribute_ _()
+        method -> <b>Result</b> object;
+    else (False)
+        if (instance (self) has attribute '_logger' ?) then (True)
+            :obtain self._ _dict_ _ using
+            object._ _getattribute_ _() method
+            and store in <b>Result</b> object;
+            if (<b>Temp</b> has attribute <b>Name</b>?) then (True)
+                :obtain self._logger.Name (Temp.Name)
+                using object._ _getattribute_ _() method
+                -> <b>Result</b> object;
+            else (False)
+                :obtain self.Name using
+                object._ _getattribute_ _()
+                method -> <b>Result</b> object;
+                
+                :-> AttributeError>
+            
+                stop
+            endif
+        else (False)
+            :obtain self.Name using
+            object._ _getattribute_ _()
+            method -> <b>Result</b> object;
+            
+            :-> AttributeError>
+            
+            stop
+        endif
+    endif
+endif
+
+:return <b>Result</b> >
+
+stop
+
+@enduml

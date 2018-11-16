@@ -1,0 +1,24 @@
+@startuml fsio_lib_logging_fsio_duallogger_enablefilelogging
+
+title Activity Diagram of the Method DualLogger.enableFileLogging()
+
+start
+
+if (instance attribute <b>file_logging</b> stores logging.NullHandler instance?) then (True)
+    :get the current severity level stored in the handler;
+    
+    :remove handler referenced by self.file_logging from\nthe self._logger referenced logger;
+    
+    :delete handler's instance;
+    
+    :create an instance of logging.FileHandler and store it in the instance attribute <b>file_logging</b>,
+    use the value of the instance attribute <b>file_log</b> during handler's creation;
+    
+    :set handler's formatter to <b>formatter</b> instance attribute value, restore the previous severity level;
+endif
+
+:enable logging - add handler to the logger;
+
+stop
+
+@enduml

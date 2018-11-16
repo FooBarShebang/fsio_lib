@@ -1,0 +1,56 @@
+@startuml locale_fsio_load_lines
+
+title Activity Diagram of the Function fsio_lib.locale_fsio.LoadLines()
+
+start
+
+:<b>FileName</b> - string, path to a text file to process
+<b>SkipLines<b> - (optional), non-negative integer, number of the first lines to skip<
+
+:open <b>FileName</b> in binary mode, read its entire content -> <b>Buffer</b> string]
+
+:set <b>NewLineFlag</b> to False;
+
+:initialize <b>Line</b> acumulator as an empty string;
+
+while (for each <b>Char</b> in <b>Buffer</b>)
+    if (<b>Char</b> is CR?) then (True)
+        if (<b>NewLineFlag</b> is True?) then (Yes)
+            :append accumulated <b>Line</b> string into <b>Result</b> list;
+            
+            :reset <b>Line</b> to the empty string;
+        else (No)
+            :set <b>NewLineFlag</b> to True;
+        endif
+    elseif (<b>Char</b> is LF?) then (True)
+        :set <b>NewLineFlag</b> to False;
+        
+        :append accumulated <b>Line</b> string into <b>Result</b> list;
+            
+        :reset <b>Line</b> to the empty string;
+    else (False)
+        if (<b>NewLineFlag</b> is True?) then (Yes)
+            :set <b>NewLineFlag</b> to False;
+            
+            :append accumulated <b>Line</b> string into <b>Result</b> list;
+            
+            :reset <b>Line</b> to the empty string;
+        else (No)
+            :append <b>Char</b> to the <b>Line</b> string;
+        endif
+    endif
+end while
+
+if (<b>Line</b> is not empty OR <b>NewLineFlag</b> is True?) then (Yes)
+    :append accumulated <b>Line</b> string into <b>Result</b> list;
+endif
+
+if (<b>SkipLines</b> is provided AND it is integer AND >= 0) then (True)
+    :remove first <b>SkipLines</b> elements from the <b>Result</b> list;
+endif
+
+:return <b>Result</b> list of strings>
+
+stop
+
+@enduml

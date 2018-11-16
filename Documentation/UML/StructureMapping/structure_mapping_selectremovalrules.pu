@@ -1,0 +1,46 @@
+@startuml structure_mapping_selectremovalrules
+
+title Activity Diagram of the Function fsio_lib.StructureMapping._SelectRemovalRules()
+
+start
+
+:<b>Buffer</b> - dictionary, data loaded from a JSON file
+:<b>Rules</b> - dictionary, the already found 'direct' mapping rules<
+
+while (for each <b>Key, Value</b> in <b>Buffer</b>)
+    if (<b>Key</b> is <b>RemovalKey</b> and there is corresponding rule in <b>Rules</b>?) then (True)
+        if (<b>Value</b> is a sequence and not string?) then (True)
+            :flatten path <b>FlattenPath(Value)</b> -> <b>Path</b> list|
+            
+            if (TypeError or ValueError is raised?) then (No)
+                while (for each <b>Item</b> in <b>Path</b>)
+                    if (<b>Item</b> is nether <b>Identifier</b> nor integer or negative?) then (True)
+                        :<b>LogRaise</b>() as ValueError|
+                
+                        stop
+                    endif
+                end while
+                
+                :add <b>Key, Value</b> into <b>Result</b> dictionary;
+            else (Yes)
+                :<b>LogRaise</b>() as ValueError|
+                
+                stop
+            endif
+        else (False)
+            :<b>LogRaise</b>() as ValueError|
+            
+            stop
+        endif
+    endif
+end while
+
+while (for each <b>Key</b> in <b>Result</b>)
+    :delete entry bound to <b>Key</b> from <b>Buffer</b> dictionary;
+end while
+
+:return <b>Result</b> dictionary>
+
+stop
+
+@enduml

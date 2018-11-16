@@ -1,0 +1,79 @@
+@startuml structure_mapping_extractvaluessubstitutions
+
+title Activity Diagram of the Function fsio_lib.StructureMapping._ExtractValuesSubstitutions()
+
+start
+
+:<b>Buffer</b> - dictionary, data loaded from a JSON file
+<b>FileName</b> - str, the name of the file being processed
+<b>Logger</b> - (optional) logger object with the standard interface, e.g. DualLogger<
+
+:select entry bound to 'INCLUDES' key -> <b>Includes</b> dictionary;
+
+if (such entry is found?) then (Yes)
+    if (<b>Includes</b> is dictionary?) then (True)
+        :get the folder of the <b>FileName</b> -> <b>Folder</b>;
+        
+        while (for each <b>Key, Value</b> in <b>Includes</b>)
+            if (<b>Key</b> is <b>IncludeKey</v>?) then (True)
+                if (<b>Value</b> is string?) then (Yes)
+                    :call <b>LoadDefinition</b>(<b>Folder/Value</b>, <b>Logger</b>) -> <b>Temp</b> |
+                    
+                    if (<b>Temp> is dictionary?) then (True)
+                        :transform and check using <b>WalkDict</b>()|
+                    else (False)
+                        :transform and check using <b>FlattenPath</b>()|
+                    endif
+                    
+                    if (Error - exception is raised?) then (Yes)
+                        :<b>LogRaise</b> as ValueError with\nthe original exception type and message|
+                        
+                        stop
+                    endif
+                    
+                    :store <b>Key : Temp</b> entry in <b>Result</b> dictionary;
+                elseif (<b>Value</b> is 2 elements sequence?) then (Yes)
+                    :call <b>LoadDefinition</b>(<b>Folder/Value[0]</b>, <b>Logger</b>) -> <b>Temp</b> |
+                    
+                    :extract required element <b>Temp[Value[1]]</b> using <b>GetElement</b>()|
+                    
+                    if (<b>Temp> is dictionary?) then (True)
+                        :transform and check using <b>WalkDict</b>()|
+                    else (False)
+                        :transform and check using <b>FlattenPath</b>()|
+                    endif
+                    
+                    if (Error - exception is raised?) then (Yes)
+                        :<b>LogRaise</b> as ValueError with\nthe original exception type and message|
+                        
+                        stop
+                    endif
+                    
+                    :store <b>Key : Temp</b> entry in <b>Result</b> dictionary;
+                else (No)
+                    :<b>LogRaise</b> as ValueError - wrong format|
+                    
+                    stop
+                endif
+            else (No)
+                :<b>LogRaise</b> as ValueError - wrong format|
+                
+                stop
+            endif
+        end while
+        
+        :delete entry bound to the key 'INCLUDES' from the <b>Buffer</b> dictionary;
+    else(False)
+        :<b>LogRaise</b> as ValueError - wrong format|
+        
+        stop
+    endif
+else (No)
+    :<b>Result</b> is an empty dictionary;
+endif
+
+:return <b>Result</b> dictionary>
+
+stop
+
+@enduml

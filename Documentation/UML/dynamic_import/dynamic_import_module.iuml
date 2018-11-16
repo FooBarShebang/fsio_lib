@@ -1,0 +1,11 @@
+!define DYNAMICIMPORT
+
+!ifndef COMPONENTS
+!include ../Templates/Components.cuml
+!endif
+
+module(dynamic_import) {
+    function(import_module)
+    
+    function(import_from_module)
+}

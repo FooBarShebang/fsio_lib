@@ -1,0 +1,89 @@
+@startuml fsio_lib_logging_fsio_loggingfsio_movefile
+
+title Activity Diagram of the Class Method LoggingFSIO.moveFile()
+
+start
+
+:<b>Source</b> - string, relative or absolute path to the source file
+<b>Path</b> - string, relative or absolute path to the target folder
+<b>Name</b> - optional string, the new base name of the file OR None<
+
+if (is <b>Source</b> not a string?) then (True)
+    :<b>iError</b> = 1,
+    <b>strError</b> is formed
+    correspondingly;
+    
+    :Log @ERROR <b>strError</b> ;
+elseif (is <b>Source</b> not a path\nto an existing file?) then (True)
+    :<b>iError</b> = 2,
+    <b>strError</b> is formed
+    correspondingly;
+    
+    :Log @ERROR <b>strError</b> ;
+elseif (is <b>Path</b> not a string?) then (True)
+    :<b>iError</b> = 1,
+    <b>strError</b> is formed
+    correspondingly;
+    
+    :Log @ERROR <b>strError</b> ;
+elseif (is <b>Name</b> neither\nNone nor string?) then (True)
+    :<b>iError</b> = 1,
+    <b>strError</b> is formed
+    correspondingly;
+    
+    :Log @ERROR <b>strError</b> ;
+else (No)
+    :convert <b>Source</b> into an absolute path;
+    
+    :convert <b>Path</b> into an absolute path;
+    
+    if (<b>Name</b> is None) then (True)
+        :use basename() of <b>Source</b> as
+        the new file base name;
+    else (False)
+        :use <b>Name</b> as the
+        new file base name;
+    endif
+    
+    :construct the full target path from the
+    <b>Path</b> and the new file base name;
+    
+    if (<b>Source</b> and the new path are to the same file?) then (Yes)
+        :LOG @WARNING
+        that the file is not
+        moved onto itself;
+    else (No)
+        :extract dirname() and basename()
+        from the full new path;
+        
+        :try to copy the file, pass <b>Source</b> and
+        these folder and base names into the
+        method <b>copyFile</b>() -> <b>iError, strError</b> pair|
+        
+        if (error occured,\n<b>iError</b> > 0?) then (Yes)
+            :Log @Error
+            <b>strError</b> ;
+        else (No)
+            :Log @DEBUG that
+            the file is copied;
+            
+            :try to delete the <b>Source</b> file
+            using method <b>deleteFile</b>()
+            -> <b>iError, strError</b> pair|
+            
+            if (error occured,\n<b>iError</b> > 0?) then (Yes)
+                :Log @Error
+                <b>strError</b> ;
+            else (No)
+                :Log @DEBUG that
+                the file is deleted;
+            endif
+        endif
+    endif
+endif
+
+:return <b>iError, strError</b> pair>
+
+stop
+
+@enduml

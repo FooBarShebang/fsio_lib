@@ -1,0 +1,17 @@
+!define LOGGINGFSIO
+
+!ifndef COMPONENTS
+!include ../Templates/Components.cuml
+!endif
+
+module(LoggingFSIO, Logging) {
+    class(ConsoleLogger)
+    
+    class(DualLogger)
+    
+    class(LoggingFSIO)
+    
+    ConsoleLogger <|-- DualLogger
+    
+    LoggingFSIO  o-- "1" DualLogger
+    }

@@ -1,0 +1,36 @@
+@startuml structure_mapping_selectadditionrules
+
+title Activity Diagram of the Function fsio_lib.StructureMapping._SelectAdditionRules()
+
+start
+
+:<b>Buffer</b> - dictionary, data loaded from a JSON file
+:<b>Rules</b> - dictionary, the already found 'direct' mapping rules<
+
+while (for each <b>Key, Value</b> in <b>Buffer</b>)
+    if (<b>Key</b> is <b>AdditionKey</b> and there is corresponding rule in <b>Rules</b>?) then (True)
+        if (<b>Value</b> is a dictionary?) then (True)
+            if (all entries in <b>Value</b> are str : dict and all keys in it are <b>ProperKey</b>?) then (True)
+                :insert <b>Key : Value</b> entry into <b>Result</b> dictionary;
+            else (False)
+                :<b>LogRaise</b>() as ValueError|
+                
+                stop
+            endif
+        else (False)
+            :<b>LogRaise</b>() as ValueError|
+            
+            stop
+        endif
+    endif
+end while
+
+while (for each <b>Key</b> in <b>Result</b>)
+    :delete entry bound to <b>Key</b> from <b>Buffer</b> dictionary;
+end while
+
+:return <b>Result</b> dictionary>
+
+stop
+
+@enduml

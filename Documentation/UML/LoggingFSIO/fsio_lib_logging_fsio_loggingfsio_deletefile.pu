@@ -1,0 +1,53 @@
+@startuml fsio_lib_logging_fsio_loggingfsio_deletefile
+
+title Activity Diagram of the Class Method LoggingFSIO.deleteFile()
+
+start
+
+:<b>Path</b> - string, relative or absolute path to a file<
+
+:<b>iError</b> = 0, <b>strError</b> = 'Ok';
+
+if (is <b>Path</b> a string?) then (Yes)
+    :convert <b>Path</b> into an absolute path;
+    
+    if (is <b>Path</b> a valid path to an existing file?) then (Yes)
+        :delete file using the standard
+        function <b>os.remove</b>();
+        
+        if (IOError or OSError\nis raised?) then (True)
+            :<b>iError</b> = 3,
+            <b>strError</b> is formed
+            correspondingly;
+        
+            :Log @ERROR <b>strError</b> ;
+        elseif (does <b>Path</b> file\nstill exists?) then (True)
+            :<b>iError</b> = 3,
+            <b>strError</b> is formed
+            correspondingly;
+        
+            :Log @ERROR <b>strError</b> ;
+        else (False)
+            :Log @INFO that
+            the file is deleted;
+        endif
+    else (No)
+        :<b>iError</b> = 2,
+        <b>strError</b> is formed
+        correspondingly;
+        
+        :Log @ERROR <b>strError</b> ;
+    endif
+else (No)
+    :<b>iError</b> = 1,
+    <b>strError</b> is formed
+    correspondingly;
+    
+    :Log @ERROR <b>strError</b> ;
+endif
+
+:return <b>iError, strError</b> pair>
+
+stop
+
+@enduml

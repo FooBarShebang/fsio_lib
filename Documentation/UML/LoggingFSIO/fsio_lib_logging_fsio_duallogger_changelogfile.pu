@@ -1,0 +1,35 @@
+@startuml fsio_lib_logging_fsio_duallogger_changelogfile
+
+title Activity Diagram of the Method DualLogger.changeLogFile()
+
+start
+
+:<b>LogFileName</b> - optional string, relative or absolute path to a log file to use, defaults to None<
+
+if (<b>LogFileName</b> is not None?) then (True)
+    :copy <b>LogFileName</b> into the
+    instance attribute <b>file_log</b> ;
+else (False)
+    :form the log file name from the current date and time and the
+    name of the logger as "%Y-%m-%d %H:%M:%S_{<b>Name</b>}.log"
+    using datetime.datetime class' methods now() and strftime();
+    
+    :store the formed file name in the instance attribute <b>file_log</b> ;
+endif
+
+:get the current severity level stored in the handler;
+
+:finalize (close() method) handler and remove it from the logger;
+
+:delete handler's instance;
+
+:create an instance of logging.FileHandler and store it in the instance attribute <b>file_logging</b>,
+use the value of the instance attribute <b>file_log</b> during handler's creation;
+
+:set handler's formatter to <b>formatter</b> instance attribute value, restore the previous severity level;
+
+:enable logging - add handler to the logger;
+
+stop
+
+@enduml

@@ -1,0 +1,4 @@
+{
+    "INCLUDES" : {"#1" : "spelling_2.json"},
+    "rule" : {"b" : "d"}
+}

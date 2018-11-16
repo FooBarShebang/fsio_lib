@@ -1,0 +1,25 @@
+!define UTILS_LOGGERS_CONSOLELOGGER
+
+class ConsoleLogger {
+    - _logger: logging.Logger
+    + console: logging.StreamHandler
+    + formatter: logging.Formatter
+    __
+    + _ _init_ _(): str/, int/ -> None
+    + setConsoleLoggingLevel(): int -> None
+    + enableConsoleLogging(): None -> None
+    + disableConsoleLogging(): None -> None
+    + warning(): str/, type A/, ... // -> None
+    + error(): str/, type A/, ... // -> None
+    + exception(): str/, type A/, ... // -> None
+    + critical(): str/, type A/, ... // -> None
+    ..Special methods..
+    # _ _getattribute_ _(): str -> type A
+    # _ _setattr_ _(): str, type A -> None
+    # _setFormatWithLineCode(): str, str, int, str -> None
+    # _setFormatNoLineCode(): None -> None
+    __
+    Emulates 'virtual inheritance' from the class logging.Logger
+    by redirecting the access to all attributes expected
+    from logging.Logger to own 'private' attribute _logger.
+}

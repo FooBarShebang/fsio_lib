@@ -1,0 +1,11 @@
+!define GENERICPARSERSXMLPARSER
+
+!ifndef CLASSES
+!include ../Templates/Class_templates.cuml
+!endif
+
+class XML_Parser <<SINGLETON>> {
+    # static_field(_SearchIndex) : dict
+    # static_field(_Type) : str = "XML"
+    # static_method(_loadFile): str, dict/, logging.Logger OR `LoggingFSIO.ConsoleLogger/ -> list(xml.etree.ElementTree.Element)
+}

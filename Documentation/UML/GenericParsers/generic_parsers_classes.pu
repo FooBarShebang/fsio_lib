@@ -1,0 +1,27 @@
+@startuml generic_parsers_classes
+
+title Class Diagram of the Module fsio_lib.GenericParsers
+
+!ifndef GENERICPARSERSGENERICPARSER
+!include ./generic_parsers_generic_parser.iuml
+!endif
+
+!ifndef GENERICPARSERSTSVPARSER
+!include ./generic_parsers_tsv_parser.iuml
+!endif
+
+!ifndef GENERICPARSERSJSONPARSER
+!include ./generic_parsers_json_parser.iuml
+!endif
+
+!ifndef GENERICPARSERSXMLPARSER
+!include ./generic_parsers_xml_parser.iuml
+!endif
+
+TSV_Parser --|> GenericParser
+
+GenericParser <|-- JSON_Parser
+
+JSON_Parser <|- XML_Parser
+
+@enduml

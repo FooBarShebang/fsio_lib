@@ -1,0 +1,43 @@
+@startuml fsio_lib_logging_fsio_duallogger_init
+
+title Activity Diagram of the Initialization Method of the class DualLogger
+
+start
+
+:<b>Name</b> - string, name of the logger to use
+<b>FileLogging</b> - optional boolean, if the file logging is to be enabled form the beginning, defaults to False
+<b>LogFileName</b> - optional string, relative or absolute path to a log file to use, defaults to None
+<b>Level</b> - optional integer, severity level for the logger, defaults to logging.DEBUG<
+
+
+if (<b>LogFileName</b> is not None?) then (True)
+    :copy <b>LogFileName</b> into the
+    instance attribute <b>file_log</b> ;
+else (False)
+    :form the log file name from the current date and time and the
+    name of the logger as "%Y-%m-%d %H:%M:%S_{<b>Name</b>}.log"
+    using datetime.datetime class' methods now() and strftime();
+    
+    :store the formed file name in the instance attribute <b>file_log</b> ;
+endif
+
+if (<b>FileLogging</b> is True?) then (Yes)
+    :store an instance of logging.FileHandler in the
+    instance attribute <b>file_logging</b>, use the value of the
+    instance attribute <b>file_log</b> during handler's creation;
+else (No)
+    :store an instance of logging.NullHandler
+    in the instance attribute <b>file_logging</b> ;
+endif
+
+:set the severity level of the <b>file_logging</b> handler to logging.WARNING;
+
+:call _ _init_ _() method of the super class (ConsoleLogger) and pass <b>Name</b> and <b>Level</b> into it|
+
+if (<b>FileLogging</b> is True?) then (Yes)
+    :enable file logging, see method <b>enableFileLogging</b>()|
+endif
+
+stop
+
+@enduml

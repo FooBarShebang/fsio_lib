@@ -1,0 +1,32 @@
+@startuml locale_fsio_convert_from_string
+
+title Activity Diagram of the Function fsio_lib.locale_fsio.ConvertFromString()
+
+start
+
+:<b>Item</b> - str, an item to be converted into a number
+<b>Notation</b> - integer, notation code; 0 for international, 1 for Dutch<
+
+if (<b>Notation</b> == 1?) then (Yes)
+    :remove all '.' from <b>Item</b> and\nreplace all ',' by '.' -> <b>Temp</b> ;
+elseif (<b>Notation</b> == 0?) then (Yes)
+    :remove all ',' from <b>Item</b> -> <b>Temp</b> ;
+else (No)
+    :<b>Temp</b> = <b>Item</b> ;
+endif
+
+:try convert into integer <b>Result = int(Temp)<b> ;
+
+if (TypeError or ValueError is raised?) then (True)
+    :try convert into floating point <b>Result = float(Temp)<b> ;
+    
+    if (TypeError or ValueError is raised?) then (Yes)
+    :<b>Result</b> = <b>Item</b> - no changes;
+    endif
+endif
+
+:return <b>Result</b> >
+
+stop
+
+@enduml

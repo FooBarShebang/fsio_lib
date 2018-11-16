@@ -1,0 +1,69 @@
+@startuml generic_parsers_generic_parser_parsemanyfiles
+
+title Activity Diagram of the Method fsio_lib.GenericParsers.GenericParser.parseManyFiles()
+
+start
+
+:<b>FolderName</b> - str, the path to a folder to process
+<b>Files</b> - list of strings, base names of the files within that folder
+<b>TargetClass</b> - (optional) any supported class / type of type to be create the target instance, default is None
+<b>Template</b> - (optional) dictionary, the file parsing template, default is None
+<b>Logger</b>  - (optional), the logger instance with the standard API, defaults to None
+<b>StrictTarget</b> - (optional) bool, mapping flag, defaults to True
+<b>StrictSorce</b> - (optional) bool, mapping flag, defaults to True
+<b>ForceTarget</b> - (optional) bool, mapping flag, defaults to False
+<
+
+if (<b>FolderName</b> is not a sting?) then (True)
+    if (<b>Logger</b> is provided (not None)?) then (True)
+        :log the problem as ERROR;
+    endif
+    
+    :raise TypeError;
+    
+    stop
+elseif (<b>Files</b> is not a sequence?) then (True)
+    if (<b>Logger</b> is provided (not None)?) then (True)
+        :log the problem as ERROR;
+    endif
+    
+    :raise TypeError;
+    
+    stop
+elseif (<b>FolderName</b> does not reference an existing folder?) then (True)
+    if (<b>Logger</b> is provided (not None)?) then (True)
+        :log the problem as ERROR;
+    endif
+    
+    :raise ValueError;
+    
+    stop
+else (False)
+    :instantiate <b>Result</b> as an empty <b>collections.OrderedDict</b> ;
+    
+    while (for each <b>File</b> in <b>Files</b>)
+        if (<b>File</b> is not a string?) then (True)
+            if (<b>Logger</b> is provided (not None)?) then (True)
+                :log the problem as ERROR;
+            endif
+            
+            :raise TypeError;
+            
+            stop
+        else (False)
+            :form <b>Path</b> from <b>FolderName</b> and <b>File</b> ;
+            
+            :parse the file using the method call\n<b>parseFile(Path, TargetClass, Template, Logger, StrictTarget, StrictSource, ForceTarget)</b>\n -> <b>Data</b> list|
+            
+            if (<b>Data</b> is not an empty list?) then (True)
+                :add <b>File : Data</b> entry into <b>Result</b> ;
+            endif
+        endif
+    end while
+    
+    :return <b>Result</b> ordered dicitonary>
+    
+    stop
+endif
+
+@enduml

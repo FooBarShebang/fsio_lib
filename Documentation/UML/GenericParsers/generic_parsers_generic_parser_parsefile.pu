@@ -1,0 +1,115 @@
+@startuml generic_parsers_generic_parser_parsefile
+
+title Activity Diagram of the Method fsio_lib.GenericParsers.GenericParser.parseFile()
+
+start
+
+:<b>FileName</b> - str, the path to a file to process
+<b>TargetClass</b> - (optional) any supported class / type of type to be create the target instance, default is None
+<b>Template</b> - (optional) dictionary, the file parsing template, default is None
+<b>Logger</b>  - (optional), the logger instance with the standard API, defaults to None
+<b>StrictTarget</b> - (optional) bool, mapping flag, defaults to True
+<b>StrictSorce</b> - (optional) bool, mapping flag, defaults to True
+<b>ForceTarget</b> - (optional) bool, mapping flag, defaults to False
+<
+
+if (in <b>try:</b>) then (no exception)
+    :check <b>FileName</b>, see <b>_checkFile</b>()|
+    
+    :get file loading hints <b>_getHints(None, Template)</b> -> <b>Hints</b> ;
+else (in <b>except:</b>) 
+    if (<b>Logger</b> is provided (not None)?) then (Yes)
+        :log as ERROR the caught exception type and message;
+    endif
+    
+    :re-raise the caught exception;
+    
+    stop
+endif
+
+if (<b>Logger</b> is provided (not None)?) then (Yes)
+    :log as INFO that <b>FileName</b> is being processed;
+endif
+
+:load the file content <b>_loadFile(FileName, Hints, Logger)</b> -> <b>Data</b> |
+
+if (<b>Data</b> is an empty list?) then (True)
+    if (<b>Logger</b> is provided (not None)?) then (Yes)
+        :log as INFO that nothing is extracted;
+    endif
+    
+    :initialize <b>Result</b> as an empty list;
+else (False)
+    if (in <b>try:</b>) then (no exception)
+        :get file parsing hints <b>_getHints(Data[0], Template)</b> -> <b>Hints</b> ;
+        
+        :get suggested target class <b>_TargetClass</b> from <b>Hints</b>["TargetClass"] - default is None;
+        
+        :get suggested template <b>_Template</b> from <b>Hints</b>["Template"] - default is None;
+        
+        if (<b>TargetClass</b> is None?) then (True)
+            if (<b>_TargetClass</b> is None?) then (Yes)
+                if (<b>Logger</b> is provided (not None)?) then (Yes)
+                    :log the problem as ERROR;
+                endif
+                
+                :raise ValueError;
+                
+                stop
+            elseif (<b>StrictTarget</b> is None?) then (Yes)
+                :<b>_StrictTarget</b> = True;
+            else (No)
+                :<b>_StrictTarget</b> = <b>StrictTarget</b> ;
+            endif
+            :use the target class suggested by the file structure;
+        else (False)
+            if (<b>StrictTarget</b> is None AND <b>_TargetClass</b> is None?) then (Yes)
+                :<b>_StrictTarget</b> = True;
+            elseif (<b>StrictTarget</b> is None AND <b>TargetClass</b> is NOT <b>_TargetClass</b>?) then (Yes)
+                :<b>_StrictTarget</b> = False;
+            elseif (<b>StrictTarget</b> is None?) then (Yes)
+                :<b>_StrictTarget</b> = True;
+            else (No)
+                :<b>_StrictTarget</b> = <b>StrictTarget</b> ;
+            endif
+            
+            :<b>_TargetClass</b> = <b>TargetClass</b> - use the provided target class;
+        endif
+        
+        if (<b>Template</b> is None?) then (True)
+            if (<b>_Template</b> is None?) then (True)
+                if (<b>Logger</b> is provided (not None)?) then (Yes)
+                    :log the problem as ERROR;
+                endif
+                
+                :raise ValueError;
+                
+                stop
+            else (False)
+                :use template suggested by the file structure;
+            endif
+        else (False)
+            :<b>_Template</b> = <b>Template</b> - use the provided template;
+        endif
+        
+        while (for each <b>DataItem</b> in <b>Data</b>)
+            :<b>parseSingleObject(DataItem, _TargetClass, _Template, Logger, _StrictTarget, StrictSource, ForceTarget) -> <b>Mapped</b> |
+            
+            :appned <b>Mapped</b> to the <b>Result</b> list;
+        endwhile
+    else (in <b>except:</b>) 
+        if (<b>Logger</b> is provided (not None)?) then (Yes)
+            :log as ERROR the caught exception type and message;
+        endif
+        
+        :re-raise the caught exception;
+        
+        stop
+    endif
+endif
+
+:return <b>Result</b> list>
+
+stop
+
+@enduml

@@ -1,0 +1,3 @@
+!define GENERAL
+
+!define GENERATED %date[yyyy.MM.dd 'at' HH:mm]%

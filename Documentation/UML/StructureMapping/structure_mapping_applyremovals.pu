@@ -1,0 +1,66 @@
+@startuml structure_mapping_applyremovals
+
+title Activity Diagram of the Function fsio_lib.StructureMapping._ApplyRemovals()
+
+start
+
+:<b>Rules</b> - dictionary of the mapping rules
+<b>Removals</b> - dictionary of the incremental removals rules<
+
+while (for each <b>Key, Value</b> in <b>Removals</b>)
+    :select the mapping rule from <b>Rules</b> by <b>Key</b> name (key) without '-' (first character) -> <b>Target</b>;
+    
+    while (for each <b>Item</b> in <b>Value</b> list)
+        :flatten <b>Item</b> using <b>FlattenPath</b>() -> <b>Path</b> list|
+        
+        if (TypeError or ValueError is raised?) then (No)
+            :reference the <b>Target</b> by <b>Temp</b> variable;
+            
+            while (for each <b>Element</b> in <b>Path</b>)
+                if (<b>Element</b> is <b>NumberString</b>?) then (True)
+                    :<b>Current</b> = int(<b>Element</b>);
+                elseif (<b>Element</b> is <b>Identifier</b> or non-negative integer?) then (True)
+                    :<b>Current</b> = <b>Element</b> ;
+                else (False)
+                    :raise ValueError;
+                    
+                    stop
+                endif
+                
+                if (<b>Current</b> is in <b>Temp</b>?) then (True)
+                    if (<b>Element</b> is not the last in <b>Path</b>?) then (Yes)
+                        :append tuple (<b>Temp, Current</b>)\ninto <b>Chain</b> list;
+                        
+                        :walk down one level\n<b>Temp[Current]</b> -> <b>Temp</b> ;
+                    else (No)
+                        :delete entry with the key\n<b>Temp</b> from <b>Temp</b> ;
+                    endif
+                else (False)
+                    :raise ValueError;
+                    
+                    stop
+                endif
+            end while
+            
+            while (for each <b>Temp, Item</b> in reversed <b>Chain</b>)
+                if (<b>Temp[Item]</b> is empty?) then (True)
+                    :delete <b>Temp[Item]</b> ;
+                endif
+            end while
+        else (Yes)
+            :raise ValueError citing the original error message;
+            
+            stop
+        endif
+    end while
+    
+    if (<b>Target</b> is empty?) then (True)
+        :delete <b>Target</b> entry from the <b>Rules</b> dictionary;
+    endif
+    
+    :remove <b>Key : Value</b> entry from the <b>Removals</b> dicitonary;
+end while
+
+stop
+
+@enduml

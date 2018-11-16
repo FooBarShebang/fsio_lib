@@ -1,0 +1,9 @@
+!define GENERICPARSERSTSVPARSER
+
+!ifndef CLASSES
+!include ../Templates/Class_templates.cuml
+!endif
+
+class TSV_Parser <<SINGLETON>> {
+    # static_method(_loadFile): str, dict/, logging.Logger OR `LoggingFSIO.ConsoleLogger/ -> list(list(str OR int OR float))
+}

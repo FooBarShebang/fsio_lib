@@ -1,0 +1,36 @@
+@startuml locale_fsio_load_table
+
+title Activity Diagram of the Function fsio_lib.locale_fsio.LoadTable()
+
+start
+
+:<b>FileName</b> - string, path to a text file to process
+<b>SkipLines<b> - (optional), non-negative integer, number of the first lines to skip<
+
+:load the text file, split into lines, skin first lines if required using <b>LoadLines(FileName, SkipLines)</b> -> <b>Lines</b> list of strings|
+
+while (for each <b>Line</b> in <b>Lines</b>)
+    :split string into substrings (columns) using <b>SplitLine(Line)</b> -> list of strings|
+    
+    :append it into <b>Buffer</b> list of lists strings;
+end while
+
+:flatten <b>Buffer</b> list of list into a single <b>Temp</b> list]
+
+:detect the used numbers notation using <b>DetectNotation(Temp)</b> -> <b>Notation</b> integer|
+
+while (for each <b>Row</b> in <b>Buffer</b>)
+    while (for each <b>Column</b> in <b>Row</b>)
+        :apply conversion, if required, using <b>ConvertFromString(Column)</b> -> <b>Item</b> int or float or string|
+        
+        :append <b>Item</b> into <b>TempList</b> (per row accumulator);
+    end while
+    
+    :append <b>TempList</b> list into <b>Result</b> list of lists;
+end while
+
+:return <b>Result</b> list of lists of int / float / strings>
+
+stop
+
+@enduml

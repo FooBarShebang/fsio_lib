@@ -1,0 +1,61 @@
+@startuml structure_mapping_delete_element
+
+title Activity Diagram of the Function fsio_lib.StructureMapping.DeleteElement()
+
+start
+
+:<b>Target</b> - (nested) container or structured object, including dictionaries and XML tree representation
+<b>Path</b> - a path or a single element of a path, an integer or string or a dictionary of string keys and numeric / boolean / string values or a (nested) sequence of these types<
+
+:unify <b>Path</b> using <b>FlattenPath</b>() function|
+
+:check that the element exists using <b>GetElement</b>(<b>Target, Path</b>) function|
+
+if (<b>Path</b> has more than 1 element?) then (Yes)
+    :<b>CurrentLevel</b> <= <b>GetElement(Target, Path[:-1])</b> |
+    
+else (No)
+    :<b>CurrentLevel</b> <= <b>Target</b> ;
+endif
+
+:get the last element of <b>Path</b> => <b>PathElement</b> ;
+
+if (<b>CurrentLevel</b>\nis an XML\ntree node?) then (True)
+    if (<b>PathElement</b> is\na string?) then (Yes)
+        if (<b>PathElement</b>\nis 'text'\nOR 'tail'?) then (True)
+            :set value of\nthis special\nattribute\nto None using\n<b>setattr()</b> ;
+        elseif (<b>PathElement</b>\nis 'tag'?) then (True)
+            :set value of\nthis special\nattribute\nto 'def_node' using\n<b>setattr()</b> ;
+        elseif (<b>PathElement</b>\nis the name of\nsub-element?) then (True)
+            :get the node using\n<b>CurrentLevel.find(PathElement)</b>\n-> <b>Node</b> ;
+            
+            :delete element using\n<b>CurrentLevel.remove(Node)</b> ;
+        else (False)
+            :delete normal\nattribute using\n<b>CurrentLevel.attrib.pop(PathElement)</b> ;
+        endif
+    elseif (<b>PathElement</b> is\nan integer?) then (Yes)
+        :get the current element using\n<b>CurrentLevel[PathElement]</b>\n-> <b>Node</b> ;
+        
+        :delete element using\n<b>CurrentLevel.remove(Node)</b> ;
+    else (No)
+        :get the current element using\n<b>GetElement</b>(<b>CurrentLevel, PathElement</b>)\n-> <b>Node</b> |
+        
+        :delete element using\n<b>CurrentLevel.remove(Node)</b> ;
+    endif
+elseif (<b>CurrentLevel</b>\nis dictionary\nOR sequence?) then (True)
+    if (<b>PathElement</b>\nis a string\nOR an integer?) then (Yes)
+        :delete element using\n<b>del CurrentLevel[PathElement]</b> ;
+    else (No)
+        :get the current element using\n<b>GetElement</b>(<b>CurrentLevel, PathElement</b>)|
+    
+        :get its index\n-> <b>Index</b> ;
+        
+        :delete element using\n<b>del CurrentLevel[Index]</b> ;
+    endif
+else (False)
+    :delete element using\n<b>delattr(CurrentLevel, PathElement)</b> ;
+endif
+
+stop
+
+@enduml

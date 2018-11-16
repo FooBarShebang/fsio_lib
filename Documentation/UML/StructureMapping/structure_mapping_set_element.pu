@@ -1,0 +1,92 @@
+@startuml structure_mapping_set_element
+
+title Activity Diagram of the Function fsio_lib.StructureMapping.SetElement()
+
+start
+
+:<b>Target</b> - (nested) container or structured object, including dictionaries and XML tree representation
+<b>Path</b> - a path or a single element of a path, an integer or string or a dictionary of string keys and numeric / boolean / string values or a (nested) sequence of these types
+<b>NewValue</b> - the value to be assinged to the element<
+
+:unify <b>Path</b> using <b>FlattenPath</b>() function|
+
+:check that the element exists using <b>GetElement</b>(<b>Target, Path</b>) function|
+
+if (<b>Path</b> has more than 1 element?) then (Yes)
+    :<b>CurrentLevel</b> <= <b>GetElement(Target, Path[:-1])</b> |
+    
+else (No)
+    :<b>CurrentLevel</b> <= <b>Target</b> ;
+endif
+
+:get the last element of <b>Path</b> => <b>PathElement</b> ;
+
+if (<b>PathElement</b> is\na string?) then (Yes)
+    if (<b>CurrentLevel</b> is\nan XML tree node?) then (Yes)
+        if (<b>NewValue</b>\nis NOT an\nXML tree node?) then (True)
+            :search special and\nthen normal attribute\nby its name\n<b>PathElement</b>\n;
+            
+            if (Found?) then (Yes)
+                :set attribute value\n<b>setattr(CurrentLevel, PathElement, NewValue)</b>\n/\n<b>CurrentLevel.set( PathElement, NewValue)</b> ;
+            else (No)
+                :raise\n<b>TypeError</b> ;
+                
+                stop
+            endif
+        else (False)
+            :search sub-element\nby its tag\n<b>CurrentLevel.find(PathElement)</b> ;
+            
+            if (Found?) then (Yes)
+                :get index of node\n-> <b>Index</b> ;
+                
+                :delete this node;
+                
+                :insert new node\ninto the same position\n<b>CurrentLevel.insert(Index, NewValue)</b> ;
+            else (No)
+                :raise\n<b>TypeError</b> ;
+                
+                stop
+            endif
+        endif
+    elseif (<b>CurrentLevel</b>\nis a dictionary?) then (Yes)
+        :set value using\n<b>CurrentLevel[PathElement]=NewValue</b> ;
+    else (No)
+        :set value using\n<b>setattr(CurrentLevel, PathElement,NewValue)</b> ;
+    endif
+elseif (<b>PathElement</b> is\nan integer?) then (Yes)
+    if (<b>CurrentLevel</b>\nis an XML\ntree node?) then (True)
+        if (<b>NewValue</b>\nis an XML\ntree node?) then (Yes)
+            :delete current node\nat <b>PathElement</b>\nindex;
+            
+            :insert new node\ninto the same position\n<b>CurrentLevel.insert(PathElement, NewValue)</b> ;
+        else (No)
+            :raise\n<b>TypeError</b> ;
+            
+            stop
+        endif
+    else(False)
+        :replace the current\nvalue at this index\n<b>CurrentLevel[PathElement]=NewValue</b> ;
+    endif
+else (No)
+    :get the current element\nusing <b>GetElement</b>(<b>CurrentLevel, PathElement</b>)|
+    
+    :get its index\n-> <b>Index</b> ;
+    
+    if (<b>CurrentLevel</b>\nis an XML\ntree node?) then (True)
+        if (<b>NewValue</b>\nis an XML\ntree node?) then (Yes)
+            :delete current node\nat <b>Index</b>\nindex;
+            
+            :insert new node\ninto the same position\n<b>CurrentLevel.insert(PathElement, NewValue)</b> ;
+        else (No)
+            :raise\n<b>TypeError</b> ;
+            
+            stop
+        endif
+    else(False)
+        :replace the current\nvalue at this index\n<b>CurrentLevel[Index]=NewValue</b> ;
+    endif
+endif
+
+stop
+
+@enduml

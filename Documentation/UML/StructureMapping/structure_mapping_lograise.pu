@@ -1,0 +1,24 @@
+@startuml structure_mapping_lograise
+
+title Activity Diagram of the Function fsio_lib.StructureMapping._LogAndRaise()
+
+start
+
+:<b>Message</b> - str, custom error message
+<b>ExceptionClass</b> - class derived from Exception, the required type of the exception to be raised
+<b>Logger</b> - (optional) instance of a logger class with the standard API, e.g. DualLogger
+<b>Original</b> -(optional) instance of Exception derived class, the original caught exception<
+
+if (<b>Original<b> is provided?) then (True)
+    :add the original exception type and message to the start of <b>Message</b>;
+endif
+
+if (<b>Logger<b> is provided?) then (True)
+    :log as <b>error</b> the required customer exception type and the <b>Message</b>;
+endif
+
+:raise <b>ExceptionClass</b>(<b>Message</b>);
+
+stop
+
+@enduml

@@ -1,0 +1,34 @@
+@startuml generic_parsers_tsv_parser_loadfile
+
+title Activity Diagram of the Method fsio_lib.GenericParsers.TSV_Parser._loadFile()
+
+start
+
+:<b>FileName</b> - str, path to a file to process
+<b>Hints</b> - dictionary of the file loading hints
+<b>Logger</b> - (optional) logger object with the standard API, defaults to None<
+
+if (<b>Hints</b>["HeaderOffset"] is None?) then (Yes)
+    :<b>HeaderOffset</b> = 0;
+else (No)
+    :<b>HeaderOffset</b> = <b>Hints</b>["HeaderOffset"];
+endif
+
+if (in <b>try:...</b>) then (no exceptions)
+    :<b>Result</b> = <b>fsio_lib.locale_fsio.LoadTable(FileName, HeaderOffset)</b> - parse file|
+    
+    :return <b>Result</b> list >
+    
+    stop
+else (Exception)
+    if (<b>Logger</b> is provided (not None)?) then (True)
+        :log the exception type and message as ERROR;
+    endif
+    
+    :re-raise exception;
+    
+    stop
+endif
+
+
+@enduml

@@ -1,0 +1,27 @@
+@startuml fsio_lib_logging_fsio_consolelogger_init
+
+title Activity Diagram of the Initialization Method of the class ConsoleLogger
+
+start
+
+:<b>Name</b> - string, name of the logger to use
+<b>Level</b> - optional integer, severity level for the logger, defaults to logging.DEBUG<
+
+:call logging.getLogger(Name) -> logging.Logger instance, and store its reference in self._logger]
+
+:set the logging level to <b>Level</b> severity;
+
+:add hidden 'dummy' handler as an instance of logging.NullHandler;
+
+:create and instance of logging.StreamHandler class and store it within
+the instance attribute <b>console</b>, set <b>formatter</b> as the format for this handler
+and logging.INFO as the severity level;
+
+:store an instance of logging.Formatter class in the instance attribute <b>formatter</b> and set
+the format to 2-lines ouput using helper method _setFormatNoLineCode()]
+
+:call own method <b>enableConsoleLogging</b>()|
+
+stop
+
+@enduml

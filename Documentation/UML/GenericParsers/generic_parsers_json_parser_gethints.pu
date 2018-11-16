@@ -1,0 +1,114 @@
+@startuml generic_parsers_json_parser_gethints
+
+title Activity Diagram of the Method fsio_lib.GenericParsers.JSON_Parser._getHints()
+
+start
+
+:<b>Data</b> - any type, the first data element from the source file OR None
+<b>Template</b> - (optional), the file parsing template dictionary OR None<
+
+if (<b>Data</b> OR <b>Template</b> are NOT None?) then (True)
+    :get <b>Hints</b> dictionary using super class method <b>GenericParser._getHints(Data, Template)</b> |
+else (False)
+    :initialize <b>Hints</b> as an empty dictionary;
+endif
+
+if (<b>Data</b> is NOT None AND <b>Template</b> is None?) then (True)
+    :initialize <b>SearchPattern</b> as an empty dictionary;
+    
+    while (for each <b>Pattern</b> in <b>SearchIndex</b>) is (not yet found a match)
+        :set <b>Flag</b> to True;
+        
+        while (for each <b>ListItem</b> in "Markers") is (not yet found a match)
+            :<b>CheckValue</b> = <b>ListItem</b>[0] ;
+            
+            :<b>Path</b> = <b>ListItem</b>[1:];
+            
+            :flatten <b>Path</b> <- <b>fsio_lib.StructureMapping.FlatttenPath(Path)</b> |
+            
+            if (in try:...) then (no exceptions)
+                :get <b>Value</b> <- <b>fsio_lib.StructureMapping.GetElement(Data, Path)</b> |
+                
+                if (<b>CheckValue</b> == <b>Value</b>?) then (True)
+                    :set <b>Flag</b> to True;
+                else (False)
+                    :set <b>Flag</b> to False;
+                endif
+            else (except AttributeError)
+                :set <b>Flag</b> to False;
+            endif
+            
+            if (<b>Flag</b> is False?) then (Yes)
+                :exit the inner loop;
+            endif
+        endwhile (found match OR forced exit OR all tried)
+        
+        if (<b>Flag</b> is True?) then (Yes)
+            while (for each <b>Tag, ListPaths</b> in "SearchTags") is (not yet found a match)
+                :set <b>Flag</b> to True;
+                
+                while (for each <b>Path</b> in <b>ListPaths</b>) is (not yet found a match)
+                    :flatten <b>Path</b> <- <b>fsio_lib.StructureMapping.FlatttenPath(Path)</b> |
+                    
+                    if (in try:...) then (no exceptions)
+                        :get <b>Value</b> <- <b>fsio_lib.StructureMapping.GetElement(Data, Path)</b> |
+                        
+                        :set <b>Flag</b> to True;
+                    else (except AttributeError)
+                        :set <b>Flag</b> to False;
+                    endif
+                    
+                    if (<b>Flag</b> is True?) then (Yes)
+                        :add <b>Tag : Value</b> entry into <b>SearchPattern</b> dictionary;
+                        
+                        :exit the inner loop;
+                    else (No)
+                        :continue with the next path;
+                    endif
+                endwhile (found match OR forced exit OR all tried)
+                
+                if (<b>Flag</b> is True?) then (True)
+                    :continue with the next <b>Tag</b> - next itteration of the middle loop;
+                else (False)
+                    :exit the middle loop;
+                endif
+            endwhile (found match OR forced exit OR all tried)
+            
+            if (<b>Flag</b> is True?) then (Yes)
+                :copy all <b>Key : Value</b> pairs from "FixedTags" into <b>SearchPattern</b> dictionary]
+                
+                :add entry "Type" : {Type} (XML or JSON) into <b>SearchPattern</b> dictionary;
+                
+                :exit the outter loop;
+            else (No)
+                :continue with the next pattern (outer loop);
+            endif
+        else (No)
+            :continue with the next pattern (outer loop);
+        endif
+    endwhile (found match or tried all patterns)
+    
+    if (<b>SearchPattern</b> is not empty?) then (True)
+        while (for each <b>Entry</b> in <b>Index</b>) is (not yet found a match)
+            if (<b>Entry</b> has all <b>Key : Value</b> pairs from <b>SearchPattern</b>?) then (Yes)
+                :get <b>FileName</b> <- <b>Entry</b>["BaseName"] ;
+                
+                :combine the base file name with the default templates folder and {Type} (XML or JSON) sub-folder;
+                
+                :load <b>Template</b> <- fsio_lib.StructureMapping.LoadDefinition() from this path;
+                
+                :get <b>Hints</b> dictionary using super class method <b>GenericParser._getHints(Data, Template)</b> |
+                
+                :exit the loop;
+            else (No)
+                :continue with the next item - next itteration of the loop;
+            endif
+        endwhile (found match OR all tried)
+    endif
+endif
+
+:return <b>Hints</b> dictionary>
+
+stop
+
+@enduml

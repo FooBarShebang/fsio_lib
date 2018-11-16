@@ -1,0 +1,41 @@
+@startuml dynamic_import_from_module
+
+title Activity Diagram of the Function fsio_lib.dynamic_import.import_from_module()
+
+start
+
+:<b>Path</b> - string, path to the module, e.g. 'library.package.module'
+<b>Name</b> - string, name of an object (class, function, etc.) to import from the module
+<b>Alias</b> - (optional) string, name of the alias to be used for the imported module
+<b>Globals</b> - (optional), dictionary representing the global symbol table of the 'caller' module, if not given or None, the reference to the module is placed into the namespace of the <b><i>fsio_lib.dynamic_import</i></b>  module<
+
+if (arguments are of the proper type?) then (Yes)
+    if (<b>Globals</b> is not provided or None?) then (Yes)
+        :<b>Globals</b> = <b>globals</b>() - i.e. the <b><i>fsio_lib.dynamic_import</i></b>  module's
+        namespace global symbol table;
+    endif
+    
+    :import the module using built-in function <b>importlib.import_module</b>()
+    store reference to in the <b>Module</b> variable;
+    
+    :get reference to the required object within the imported module as
+    <b>getattr(Module, Name)</b> -> store reference in the <b>Object</b> variable;
+    
+    if (<b>Alias</b> is given (not None)?) then (Yes)
+        :store reference to the imported object in the
+        <b>Globals</b> dictionary with <b>Name</b> as the key;
+    else (No)
+        :store reference to the imported object in the
+        <b>Globals</b> dictionary with <b>Alias</b> as the key;
+    endif
+    
+    :return <b>Object</b> - reference to the imported object>
+    
+    stop
+else (False)
+    :raise <b>TypeError</b> ;
+    
+    stop
+endif
+
+@enduml

@@ -1,0 +1,13 @@
+@startuml fsio_lib_logging_fsio_duallogger_disablefilelogging
+
+title Activity Diagram of the Method DualLogger.disableFileLogging()
+
+start
+
+if (instance attribute <b>file_logging</b> stores logging.FileHandler instance?) then (True)
+    :remove handler referenced by self.file_logging from the self._logger referenced logger;
+endif
+
+stop
+
+@enduml

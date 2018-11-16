@@ -1,0 +1,65 @@
+@startuml generic_parsers_parsefile
+
+title Activity Diagram of the Function fsio_lib.GenericParsers.parseFile()
+
+start
+
+:<b>FileName</b> - str, the path to a file to process
+<b>TargetClass</b> - (optional) any supported class / type of type to be create the target instance, default is None
+<b>Template</b> - (optional) dictionary, the file parsing template, default is None
+<b>Logger</b>  - (optional), the logger instance with the standard API, defaults to None
+<b>StrictTarget</b> - (optional) bool, mapping flag, defaults to True
+<b>StrictSorce</b> - (optional) bool, mapping flag, defaults to True
+<b>ForceTarget</b> - (optional) bool, mapping flag, defaults to False
+<
+
+if (in <b>try:</b>) then (no exception)
+    :check <b>FileName</b>, see <b>GenericParser._checkFile</b>()|
+
+    if (<b>FileName</b> lowercase ends with ".json"?) then (True)
+        :<b>Classes</b> = [JSON_Parser, TSV_Parser, XML_Parser] ;
+    elseif (<b>FileName</b> lowercase ends with ".xml"?) then (True)
+        :<b>Classes</b> = [XML_Parser, TSV_Parser, JSON_Parser] ;
+    else (Yes)
+        :<b>Classes</b> = [TSV_Parser, JSON_Parser, XML_Parser] ;
+    endif
+    
+    :initialize <b>Result</b> as an empty list;
+    
+    while (for each <b>Parser</b> in <b>Classes</b>) is (not yet parsed)
+        if (in <b>try:</b>) then (no exception)
+            :<b>Result</b> = <b>Parser.parseFile(FileName, TargetClass, Template, Logger, StrictTarget, StrictSorce, ForceTarget)</b> |
+            
+            :exit the loop;
+        else (in <b>except:</b> - exception is raised)
+            :continue with the next parser - next itteration;
+        endif
+    endwhile (forced exit OR tried all parsers) 
+else (in <b>except:</b>) 
+    if (<b>Logger</b> is provided (not None)?) then (Yes)
+        :log as ERROR the caught exception type and message;
+    endif
+    
+    :re-raise the caught exception;
+    
+    stop
+endif
+
+if (<b>Result</b> is empty?) then (True)
+    if (<b>Logger</b> is provided (not None)?) then (Yes)
+        :log as ERROR the ValueError message that the file cannot be parsed;
+        
+    endif
+    
+    :raise ValueError;
+    
+    stop
+else (False)
+    :return <b>Result</b> list>
+    
+    stop
+endif
+
+
+
+@enduml

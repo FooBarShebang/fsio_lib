@@ -1,0 +1,20 @@
+{
+"dummy" : {
+    "id" :" 1",
+    "type" : "dummy",
+    "tests" : [
+        {"result" : "FAIL", "value" : 0},
+        {"result" : "PASS", "value" : 1}
+    ]
+    }
+}
+{
+    "dummy" : {
+        "id" :" 1",
+        "type" : "dummy",
+        "tests" : [
+            {"result" : "FAIL", "value" : 0},
+            {"result" : "PASS", "value" : 1}
+        ]
+        }
+    }

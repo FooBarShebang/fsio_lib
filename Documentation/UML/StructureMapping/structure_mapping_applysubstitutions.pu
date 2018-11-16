@@ -1,0 +1,48 @@
+@startuml structure_mapping_applysubstitutions
+
+title Activity Diagram of the Function fsio_lib.StructureMapping._ApplySubstitutions()
+
+start
+
+:<b>Buffer</b> - dictionary, data loaded from a JSON file
+<b>Substitutions</b>- dictionary, the already resolved path and value substituions
+<b>FileName</b> - str, the name of the file being processed
+<b>Logger</b> - (optional) logger object with the standard interface, e.g. DualLogger<
+
+:get all 'direct' mapping rules <b>SelectDirectRules<b>(<b>Buffer</b>) -> <b>Rules</b> dictionary|
+
+:get all addition rules <b>SelectAdditionRules<b>(<b>Buffer, Rules</b>) and add them to <b>Rules</b> dictionary|
+
+if (TypeError or ValueError is raised) then (No)
+    while (for each <b>Key, Value</b> in <b>Rules</b>)
+        if (<b>Value</b> is a string and is a key in <b>Substitutions</b>?) then (True)
+            :add <b>Key : Substitutions[Value]</b>\nentry into <b>Result</b> dictionary;
+        elseif (<b>Value</b> is a dictionary?) then (True)
+            :recusively walk <b>Value</b> using\n<b>WalkDict</b>() function and apply\nthe substituions;
+            
+            :add <b>Key : Substitutions[Value]</b>\nentry into <b>Result</b> dictionary;
+        else (False)
+            :flatten <b>Value</b> using <b>FlattenPath</b>\n-> <b>Path</b> list;
+            
+            while (for each <b>Item</b> in </b>Path</b>)
+                if (<b>Item</b> is a string and\nis a key in <b>Substitutions</b>?) then (True)
+                    :replace <b>Item</b> by\n<b>[Item]</b> in <b>Path</b> ;
+                endif
+            endwhile
+            
+            :flatten <b>Path</b> using <b>FlattenPath</b>\n-> <b>Path</b> list;
+            
+            :add <b>Key : Path</b>\nentry into <b>Result</b> dictionary;
+        endif
+    end while
+else (Yes)
+    :<b>LogRaise</b>() as ValueError with\nthe original exception type and message|
+    
+    stop
+endif
+
+:return <b>Result</b> dictionary>
+
+stop
+
+@enduml

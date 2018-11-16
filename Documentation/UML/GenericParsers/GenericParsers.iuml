@@ -1,0 +1,29 @@
+!define GENERICPARSERS
+
+!ifndef COMPONENTS
+!include ../Templates/Components.cuml
+!endif
+
+module(GenericParsers) {
+    class(Generic_Parser)
+    
+    class(TSV_Parser)
+    
+    class(XML_Parser)
+    
+    class(JSON_Parser)
+    
+    Generic_Parser <|-- TSV_Parser
+    
+    Generic_Parser <|-- JSON_Parser
+    
+    XML_Parser --|> JSON_Parser
+    
+    function(parseFile)
+    
+    function(parseManyFiles)
+    
+    Generic_Parser <- parseFile : uses
+    
+    parseFile <-- parseManyFiles : uses
+}

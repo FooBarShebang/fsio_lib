@@ -1,0 +1,17 @@
+@startuml generic_parsers_generic_parser_checkfile
+
+title Activity Diagram of the Method fsio_lib.GenericParsers.GenericParser._checkFile()
+
+start
+
+:<b>FileName</b> - check value, supposedly a path to a file<
+
+if (<b>FileName</b> is a string?) then (No)
+    :raise TypeError;
+elseif (<b>FileName</b> references an existing file?) then (No)
+    :raise ValueError;
+endif
+
+stop
+
+@enduml

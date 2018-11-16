@@ -1,0 +1,31 @@
+@startuml generic_parsers_xml_parser_loadfile
+
+title Activity Diagram of the Method fsio_lib.GenericParsers.XML_Parser._loadFile()
+
+start
+
+:<b>FileName</b> - str, path to a file to process
+<b>Hints</b> - dictionary of the file loading hints
+<b>Logger</b> - (optional) logger object with the standard API, defaults to None<
+
+if (in <b>try:...</b>) then (no exceptions)
+    :parse the content of <b>FileName</b> into <b>Tree</b> object using <b>xml.etree.EelementTree.parse</b>() function]
+    
+    :get root element of the XML tree <b>Tree.getroot</b>() -> <b>Root</b> ;
+    
+    :append <b>Root</b> into the <b>Result</b> list - single element;
+    
+    :return <b>Result</b> list >
+    
+    stop
+else (Exception)
+    if (<b>Logger</b> is provided (not None)?) then (True)
+        :log the exception type and message as ERROR;
+    endif
+    
+    :re-raise exception;
+    
+    stop
+endif
+
+@enduml

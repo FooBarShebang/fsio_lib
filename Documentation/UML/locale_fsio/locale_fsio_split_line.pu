@@ -1,0 +1,45 @@
+@startuml locale_fsio_split_line
+
+title Activity Diagram of the Function fsio_lib.locale_fsio.SplitLine()
+
+start
+
+:<b>Line</b> - string<
+
+if (<b>Line</b> is empty?) then (No)
+    :set <b>SpaceRun</b> flag to False;
+    
+    :initialize <b>Temp</b> accumulator as empty string;
+    
+    while (for each <b>Char</b> in <b>Line</b>)
+        if (<b>Char</b> is not ' ' nor '\t'?) then (True)
+            :set <b>SpaceRun</b> flag to False;
+            
+            :append <b>Char</b> to <b>Temp</b> ;
+        elseif (<b>Char</b> is '\t'?) then (True)
+            :set <b>SpaceRun</b> flag to False;
+            
+            :append <b>Temp</b> string to <b>Result</b> list;
+            
+            :reset <b>Temp</b> accumulator to an empty string;
+        else (False)
+            if (<b>SpaceRun</b> is False?) then (True)
+                :set <b>SpaceRun</b> flag to True;
+                
+                :append <b>Temp</b> string to <b>Result</b> list;
+                
+                :reset <b>Temp</b> accumulator to an empty string;
+            endif
+        endif
+    end while
+    
+    :append <b>Temp</b> string to <b>Result</b> list;
+else (Yes)
+    :<b>Result</b> = [''] ;
+endif
+
+:return <b>Result</b> list>
+
+stop
+
+@enduml

@@ -1,0 +1,23 @@
+@startuml structure_mapping_extractpathsubstitutions
+
+title Activity Diagram of the Function fsio_lib.StructureMapping._ExtractPathSubstitutions()
+
+start
+
+:<b>Buffer</b> - dictionary, data loaded from a JSON file<
+
+:select entry bound to 'PATHS' key -> <b>Paths</b> dictionary;
+
+if (such entry is found?) then (Yes)
+    :resolve all path substituions <b>ResolvePathSubstituions</b> -> <b>Result</b> dictionary|
+    
+    :delete entry bound to 'PATHS' key from the <b>Buffer</b> dictionary;
+else (No)
+    :<b>Result</b> is an empty dictionary;
+endif
+
+:return <b>Result</b> dictionary>
+
+stop
+
+@enduml
