@@ -37,12 +37,6 @@ Modules:
         files with the data mapping onto specified class instances using the
         specified templates. These classes are based on the
         fsio_lib.StructureMapping.MapValues() function.
-    DataProviders: implements classes for batch processing of the data files.
-        Note that only the generic mechanics of the files selections and
-        grouping as well as the data processing work flow is concerned. The
-        actual files parsing / data processing mechanisms are to be implemented
-        elsewhere and plugged-in (passing by reference) into the corresponding
-        methods.
 """
 
 __project__ = 'Python framework for the structured and TSV files parcing'
@@ -56,5 +50,5 @@ __maintainer__ = 'a.azarov@diagnoptics.com'
 __license__ = 'Public Domain'
 __copyright__ = 'Diagnoptics Technologies B.V.'
 
-__all__ = ['DataProviders', 'StructureMapping', 'GenericParsers', 'LoggingFSIO',
+__all__ = ['StructureMapping', 'GenericParsers', 'LoggingFSIO',
             'locale_fsio', 'dynamic_import', 'fs_maintenance']

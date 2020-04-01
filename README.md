@@ -27,8 +27,6 @@ Concerning the files collections synchronization specifically and general files 
 * Locale independed processing of 'bad' format text files - non-POSIX line end conventions, digital dot / comma conventions, etc. - see module *locale_fsio*
 * Parsing of the tabulated data (TSV, CSV, etc.) or structured data text files (XML, JSON, etc.) using templates for the data extraction, including automated detection of the input file structure and selection of the required template and parser object (see module *GenericParsers*)
 
-Concerning the batch data processing (see module *DataProviders*) the goal is to provide a common, uniform API for the (batch) files I/O and frameworks for the work flow creations, into which the actual file parsers (structure aware) and data processing methods can be simply plugged-in. In turn, it expects certain API uniformity from such external methods.
-
 ## Installation
 
 Clone the official repository into your local workspace / project folder:
@@ -77,10 +75,6 @@ Implements a number of functions for the maintenance of a file system, including
 ### GenericParsers
 
 Implements singleton classes for parsing TSV, XML and JSON files with the data mapping onto specified class instances using the specified templates. Also defines generic parsing functions, which automatically select the required parsing class.
-
-### Module DataProviders
-
-Implements classes for batch processing of the data files. Note that only the generic mechanics of the files selections and grouping as well as the data processing work flow is concerned. The actual files parsing / data processing mechanisms are to be implemented elsewhere and plugged-in (passing by reference) into the corresponding methods.
 
 ### Structure of the Library
 
