@@ -155,7 +155,7 @@ class Test_LoadDefinition(unittest.TestCase):
     """
     Test cases for the function LoadDefinition of the module StructureMapping.
     
-    Test ID - UT002.1
+    Implements test IDs - TEST-T-160, TEST-T-161.
     """
     
     @classmethod
@@ -176,7 +176,7 @@ class Test_LoadDefinition(unittest.TestCase):
         opened, and ValueError if it is not a proper JSON file - i.e. the
         original exceptions are re-raised if caught.
         
-        Test ID - UT002.1.1
+        Test ID - TEST-T-160. Covers requirements REQ-AWM-120, REQ-AWM-121.
         """
         #IOError / OSError
         strFileName = os.path.join(TEST_FILES_FOLDER, 'foo_bar.baz')
@@ -206,7 +206,7 @@ class Test_LoadDefinition(unittest.TestCase):
         * Improper path definition in any path / value substitution or mapping
             rule
         
-        Test ID - UD002.1.2
+        Test ID - TEST-T-160 - part 2. Covers requirements REQ-AWM-121.
         """
         for strName in BAD_FORMAT_DSL:
             strFileName = os.path.join(TEST_FILES_FOLDER, strName)
@@ -220,7 +220,8 @@ class Test_LoadDefinition(unittest.TestCase):
         The function must parse the proper formed JSON file with all entries
         conforming the mapping DSL properly.
         
-        Test ID - UD002.1.3
+        Test ID - TEST-T-161. Covers requirements REQ-FUN-100, REQ-FUN-102,
+        REQ-FUN-103.
         """
         for strCase, strResult in GOOD_FORMAT_JSON:
             strFileName = os.path.join(TEST_FILES_FOLDER, strCase)
@@ -238,7 +239,7 @@ class Test_MapValues(unittest.TestCase):
     """
     Test cases for the function MapValues of the module StructureMapping.
     
-    Test ID - UT002.2
+    Implements test IDs - TEST-T-170, TEST-T-171, TEST-T-172
     """
     
     @classmethod
@@ -258,8 +259,6 @@ class Test_MapValues(unittest.TestCase):
         The function raises TypeError if any type but mapping (e.g. dict) is
         passed as the third argument - the mapping rules dictionary. Regardless
         of the bStrictSource and bStrictTarget flags.
-        
-        Test ID - UD002.2.1
         """
         for gTestObject in [list, tuple, int, float, str, [], tuple(), 1, 2.0,
                                                                         "test"]:
@@ -280,7 +279,7 @@ class Test_MapValues(unittest.TestCase):
         not of the proper format (DE001 DSL specifications). Regardless of the
         bStrictSource and bStrictTarget flags.
         
-        Test ID - UD002.2.2
+        Test ID - TEST-T-170. Covers requirements REQ-AWM-110, REQ-AWM-111.
         """
         #bad target path elements
         lstBadElements = ["a.b", -1, 1.0, "-1", "1.0", "_", "#a", "$b", "+a",
@@ -316,7 +315,7 @@ class Test_MapValues(unittest.TestCase):
         The function must raise AttributeError if the required element is not
         found in the source object and the bStrictSource flag is True.
         
-        Test ID - UT002.2.3
+        Test ID - TEST-T-171. Covers requirement REQ-AWM-122.
         """
         Target = {"a" : { "b" : 0, "c" : 0}}
         MapDict = { "a" : { "b" : "a.b", "c" : "a.c"}}
@@ -336,7 +335,8 @@ class Test_MapValues(unittest.TestCase):
         not found in the source object and the bStrictSource flag is False. The
         data is, however, not copied for this specific mapping rule.
         
-        Test ID - UT002.2.4
+        Test ID - TEST-T-171 - part 2. Covers requirements REQ-AWM-122,
+        REQ-FUN-100.
         """
         Target = {"a" : { "b" : 0, "c" : 0}}
         MapDict = { "a" : { "b" : "a.b", "c" : "a.c"}}
@@ -361,7 +361,7 @@ class Test_MapValues(unittest.TestCase):
         bForceTarget is True and there is an immutable or incopatible object in
         the path.
         
-        Test ID - UT002.2.6
+        Test ID - TEST-T-171 - part 3. Covers requirement REQ-AWM-122.
         """
         Source = {"a" : { "b" : 1, "c" : 2}}
         MapDict = { "a" : { "b" : "a.b", "c" : "a.c"}}
@@ -379,10 +379,11 @@ class Test_MapValues(unittest.TestCase):
         """
         The function must raise AttributeError if the required element is not
         found in the target object and the bStrictTarget flag is False, whilst
-        bForceTarget is True and there is an immutable or incopatible object in
-        the path.
+        bForceTarget is True and there are no immutable or incopatible objects
+        in the path.
         
-        Test ID - UT002.2.7
+        Test ID - TEST-T-171 - part 4. Covers requirements REQ-AWM-122,
+        REQ-FUN-100.
         """
         Source = {"a" : { "b" : 1, "c" : 2}}
         MapDict = { "a" : { "b" : "a.b", "c" : "a.c"}}
@@ -445,7 +446,8 @@ class Test_MapValues(unittest.TestCase):
         * nested XML object -> class including nested sequence, dictionary and
             another struct-like class
         
-        Test ID - UT002.2.8
+        Test ID - TEST-T-172. Covers requirements REQ-FUN-100, REQ-FUN-103 and
+        REQ-FUN-104.
         """
         TestValue = 42
         # OuterClass -> OuterClass
@@ -576,6 +578,6 @@ TestSuite = unittest.TestSuite()
 TestSuite.addTests([TestSuite1, TestSuite2])
 
 if __name__ == "__main__":
-    sys.stdout.write("Conducting fsio_lib.MapValues module tests...\n")
+    sys.stdout.write("Conducting fsio_lib.StructureMapping module tests 2...\n")
     sys.stdout.flush()
     unittest.TextTestRunner(verbosity = 2).run(TestSuite)

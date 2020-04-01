@@ -1,0 +1,31 @@
+@startuml fs_maintenance_remove_duplicate_files
+
+title Activity Diargam of the Function fsio_lib.fs_maintenance.RemoveDuplicateFiles()
+
+start
+
+:<b>Folder</b> - string, path to a folder to analyzed
+<b>Subpaths</b> - (optional) list of strings, sub-paths relative to <b>Folder</b> of the sub-folders, there the found duplicates
+have priority to remain; the order of elements defines the priority ratings as well<
+
+:Make <b>Folder</b> tree structure dictionary, group files by base filenames and md5 check-sums, see function MakeFolderDictionary()|
+
+while (for each base filname + md5 sum pair)
+    if (there are several such files in the different sub-folders ?) then (Yes)
+        if (any of the copies is in the sub-folder amongst <b>Subpaths</b> ?) then (True)
+            :select the copy located in the sub-folder with\nthe lowest index in <b>Subpaths</b> list;
+        else (False)
+            :select copy / copies with the latest date-time stap;
+
+            if (there are several such copies?) then (Yes)
+                :select one copy with the shortest\nsub-path;
+            endif
+        endif
+
+        :remove all copies except the selected one;
+    endif 
+end while (Done)
+
+stop
+
+@enduml

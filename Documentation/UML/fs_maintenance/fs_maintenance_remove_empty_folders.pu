@@ -1,0 +1,31 @@
+@startuml fs_maintenance_remove_empty_folders
+
+title Activity Diagram of the Function fsio_lib.fs_maintenance.RemoveEmptyFolders()
+
+start
+
+:<b>Target</b> - string, path to a folder to be analyzed<
+
+:Create empty list <b>Folders</b> ;
+
+while (Iterate through <b>Target</b> folder files and sub-folders tree structure)
+    if (Current 'root' folder has no sub-folders or files?) then (True)
+        :Add its path to <b>Folders</b> list;
+    endif
+end while (Done)
+
+while (For each path in the <b>Folders</b> list)
+    :Delete the folder pointed by this path;
+
+    :Determine the 'parent' folder of the one just deleted;
+
+    while (Current 'parent' folder has no sub-folders or files)
+        :Delete the current 'parent' folder;
+
+        :Move one folder up - to the 'parent' of the just deleted folder;
+    end while (Stop)
+end while (Done)
+
+stop
+
+@enduml

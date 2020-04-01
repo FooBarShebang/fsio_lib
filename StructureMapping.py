@@ -29,7 +29,7 @@ Functions:
 """
 
 __version__ = "0.1.0.0"
-__date__ = "15-11-2018"
+__date__ = "31-10-2018"
 __status__ = "Production"
 
 __all__ = ["FlattenPath", "ResolvePathSubstitutions", "GetElement", "MapValues",

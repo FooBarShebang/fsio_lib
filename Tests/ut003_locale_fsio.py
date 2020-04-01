@@ -2,7 +2,7 @@
 """
 Module Tests.ut003_locale_fsio
 
-Implements unit testing of the module locale_fsio. Test ID - UT003
+Implements unit testing of the module locale_fsio. See tests report TE004.
 """
 
 __version__ = "0.1.0.1"
@@ -51,7 +51,7 @@ def GenerateString():
 
 def GenerateStringsList():
     """
-    Returns a rnadom length list of random ASCII strings.
+    Returns a random length list of random ASCII strings.
     
     Signature:
         None -> list(str)
@@ -68,7 +68,7 @@ class Test_LineEndings(unittest.TestCase):
     """
     Test cases for the function LineEndings of the module locale_fsio.
     
-    Test ID - UT003.1.1
+    Test ID - TEST-T-400. Covers requirement REQ-FUN-400.
     """
     
     @classmethod
@@ -86,7 +86,7 @@ class Test_LineEndings(unittest.TestCase):
         """
         Forced LF ending.
         
-        Test ID - UT003.1.1
+        Test ID - TEST-T-400 - part 1 (LF). Covers requirement REQ-FUN-400.
         """
         strFileName = '{}-{}.{}'.format(self.FileBase, 'LF', self.FileExtension)
         strFileName = os.path.join(self.OutFolder, strFileName)
@@ -100,7 +100,7 @@ class Test_LineEndings(unittest.TestCase):
         """
         Forced CR ending.
         
-        Test ID - UT003.1.1
+        Test ID - TEST-T-400 - part 2 (CR). Covers requirement REQ-FUN-400.
         """
         strFileName = '{}-{}.{}'.format(self.FileBase, 'CR', self.FileExtension)
         strFileName = os.path.join(self.OutFolder, strFileName)
@@ -114,7 +114,7 @@ class Test_LineEndings(unittest.TestCase):
         """
         Forced CRLF ending.
         
-        Test ID - UT003.1.1
+        Test ID - TEST-T-400 - part 3 (CRLF). Covers requirement REQ-FUN-400.
         """
         strFileName='{}-{}.{}'.format(self.FileBase, 'CRLF', self.FileExtension)
         strFileName = os.path.join(self.OutFolder, strFileName)
@@ -128,7 +128,7 @@ class Test_LineEndings(unittest.TestCase):
         """
         Default line ending - should be 'CRLF'
         
-        Test ID - UT003.1.1
+        Test ID - TEST-T-400 - part 4 (default). Covers requirement REQ-FUN-400.
         """
         strFileName='{}-{}.{}'.format(self.FileBase, 'DEF', self.FileExtension)
         strFileName = os.path.join(self.OutFolder, strFileName)
@@ -142,7 +142,7 @@ class Test_DetectNotation(unittest.TestCase):
     """
     Test cases for the function DetectNotation of the module locale_fsio.
     
-    Test ID - UT003.2.1
+    Test ID - TEST-T-402. Covers requirement REQ-FUN-401.
     """
     
     @classmethod
@@ -172,7 +172,7 @@ class Test_DetectNotation(unittest.TestCase):
         """
         Test concerning the detection of the numbers notation INT / NL.
         
-        Test ID - UT003.2.1
+        Test ID - TEST-T-402. Covers requirement REQ-FUN-401.
         """
         for strlstTest, bExpResult in self.Notations:
             bResult = self.TestFunc(strlstTest)
@@ -182,7 +182,7 @@ class Test_ConvertFromString(unittest.TestCase):
     """
     Test cases for the function ConvertFromString of the module locale_fsio.
     
-    Test ID - UT003.3.1
+    Test ID - TEST-T-402 - part 2. Covers requirement REQ-FUN-401.
     """
     
     @classmethod
@@ -206,7 +206,7 @@ class Test_ConvertFromString(unittest.TestCase):
         quoted numbers (in strings) stored in INT / NL notation with possible
         inclusion of the decimal delimiters.
         
-        See REQ-FUN5
+        Test ID - TEST-T-402 - part 2. Covers requirement REQ-FUN-401.
         """
         for iIdx, strTest in enumerate(self.TestDutch):
             gExpResult = self.DutchResult[iIdx]
@@ -221,7 +221,7 @@ class Test_LoadLines(unittest.TestCase):
     """
     Test cases for the function LoadLines of the module locale_fsio.
     
-    Test ID - UT003.4
+    Test ID - TEST-T-401. Covers requirement REQ-FUN-400, REQ-FUN-402.
     """
     
     @classmethod
@@ -242,7 +242,7 @@ class Test_LoadLines(unittest.TestCase):
         endings, their proper removal and preservation of the tailing TABs and
         spaces.
         
-        Test ID - UT003.4.1
+        Test ID - TEST-T-401. Covers requirement REQ-FUN-400.
         """
         #default ending
         self.SaveFunc(self.TempFile, self.TestData)
@@ -259,7 +259,7 @@ class Test_LoadLines(unittest.TestCase):
         Proper treatment of the line endings, their proper removal and
         preservation of the tailing TABs and spaces and skipping of the lines.
         
-        Test ID - UT003.4.2
+        Test ID - TEST-T-401. Covers requirement REQ-FUN-400, REQ-FUN-402.
         """
         #default ending
         self.SaveFunc(self.TempFile, self.TestData)
@@ -276,7 +276,7 @@ class Test_SplitLine(unittest.TestCase):
     """
     Test cases for the function SplitLine of the module locale_fsio.
     
-    Test ID - UT003.5.1
+    Test ID - TEST-T-4
     """
     
     @classmethod
@@ -309,7 +309,7 @@ class Test_LoadTable(unittest.TestCase):
     Test cases for the function LoadTable of the module locale_fsio -
     integration test.
     
-    Test ID - UT003.6.1
+    Test ID - TEST-T-404. Covers requirements REQ-FUN-400 to REQ-FUN-404.
     """
     
     @classmethod
@@ -329,7 +329,8 @@ class Test_LoadTable(unittest.TestCase):
         Single column. CRLF line end. Mixed data - str + int + float in dutch
         scientific notation.
         
-        Test ID - UT003.6.1
+        Test ID - TEST-T-404 - part 1. Covers requirements REQ-FUN-400 to
+        REQ-FUN-404.
         """
         Result = self.TestFunc(self.TestFBR)
         self.assertEqual(len(Result), 2053)
@@ -347,7 +348,8 @@ class Test_LoadTable(unittest.TestCase):
         """
         Two columns, spaces. CRLF line end. Floats in international notation.
         
-        Test ID - UT003.6.1
+        Test ID - TEST-T-404 - part 2. Covers requirements REQ-FUN-400 to
+        REQ-FUN-404.
         """
         Result = self.TestFunc(self.TestLMP)
         self.assertEqual(len(Result), 701)
@@ -363,7 +365,8 @@ class Test_LoadTable(unittest.TestCase):
         Three columns, tabs and spaces (variable length). LF line end. Mixed
         data: ints, floats in international notation and strings.
         
-        Test ID - UT003.6.1
+        Test ID - TEST-T-404 - part 3. Covers requirements REQ-FUN-400 to
+        REQ-FUN-404.
         """
         Result = self.TestFunc(self.TestLIN)
         self.assertEqual(len(Result), 3)
@@ -381,7 +384,8 @@ class Test_LoadTable(unittest.TestCase):
         Three columns, tabsspaces (variable length). CRLF line end. Mixed
         data: ints and floats in dutch notation with delimiters.
         
-        Test ID - UT003.6.1
+        Test ID - TEST-T-404 - part 4. Covers requirements REQ-FUN-400 to
+        REQ-FUN-404.
         """
         Result = self.TestFunc(self.TestSP, 2)
         self.assertEqual(len(Result), 2048)

@@ -1,10 +1,10 @@
 @startuml structure_mapping_use_case
 
 !ifndef GENERAL
-!include ../Templates/General_templates.cuml
+!include ../Templates/General.cuml
 !endif
 
-title Use Case Diagram of the Module fsio_lib.StructureMapping. GENERATED
+title Use Case Diagram of the Module fsio_lib.StructureMapping.
 
 actor "Mapping Definition File" <<JSON>> as Definition
 

@@ -1,15 +1,8 @@
 # DE002 Specification of the Structure of the Parsing Template Files
 
-## Table of Content
-
-* [Parsing Templates](#Parsing-Templates)
-* [Templates Index](#Templates-Index)
-* [Search Indexes](#Search-Indexes)
-* [Use Example](#Use-Example)
-
 ## Parsing Templates
 
-Each file parsing template is to be stored in one of the subfolders "TSV", "JSON" or "XML" of the folder "Templates" within the package *fsio_lib*, whith the name of the sub-folder corresponding to the type of the source data file. Each templates describes the mapping rules for parsing of a single data element within the source file onto a single insance of the target class / type, whereas the TSV and JSON but not XML files may contain multiple data elements. The result of the parsing of a single source file is always a list of instances of the target class / type, even if the source file contains but one data elemetn, in which case the generated results list also contains only a single element.
+Each file parsing template is to be stored in one of the sub-folders "TSV", "JSON" or "XML" of the folder "Templates" within the package *fsio_lib*, with the name of the sub-folder corresponding to the type of the source data file. Each templates describes the mapping rules for parsing of a single data element within the source file onto a single instance of the target class / type, whereas the TSV and JSON but not XML files may contain multiple data elements. The result of the parsing of a single source file is always a list of instances of the target class / type, even if the source file contains but one data element, in which case the generated results list also contains only a single element.
 
 The single data element is:
 
@@ -29,7 +22,7 @@ The only mandatory entry is the key "**DataMapping**" with the bound value being
 
 * It may be a flat or nested dictionary with each level of nesting corresponding to exactly one level of the target object`s data nesting structure
 * At each level of the template`s dictionary nesting the allowed names of the keys are:
-  - double quoted proper python identifiers (hence, no dot notation) as the attributes / keys names at the corresponding nesting level of the target object
+  - double quoted proper Python identifiers (hence, no dot notation) as the attributes / keys names at the corresponding nesting level of the target object
   - double quoted non-negative integer numbers as the sequence type container`s elements indexes at the corresponding nesting level of the target object
 * The values bound to these keys may be:
   - a dictionary - the next nesting level`s structure within the target object
@@ -51,11 +44,11 @@ Two optional entries may be included into a template: "**TargetClassModule**" an
 }
 ```
 
-In this case, the parser will import *ClassA* from the module *mylib.classes*, unless it has been already imported earlier, and will use this class as the suggested targer class / type. If the required target class is not explicitely specified, the suggested by the template target class is used instead to instantiate the target objects.
+In this case, the parser will import *ClassA* from the module *mylib.classes*, unless it has been already imported earlier, and will use this class as the suggested target class / type. If the required target class is not explicitly specified, the suggested by the template target class is used instead to instantiate the target objects.
 
 ### Optional Entries - TSV Specific
 
-Specfically for the TSV format the parser searches for the entry with the key "**HeaderOffser**, which must have a non-negative integer as the bound value. This entry indicates, that the corresponding number of the first lines in the source file are the header, and they must be skipped. If such an entry is not found in an TSV parsing template the default value of 0 is used instead (all lines of the file are taken).
+Specifically for the TSV format the parser searches for the entry with the key "**HeaderOffser**, which must have a non-negative integer as the bound value. This entry indicates, that the corresponding number of the first lines in the source file are the header, and they must be skipped. If such an entry is not found in an TSV parsing template the default value of 0 is used instead (all lines of the file are taken).
 
 ### Other Entries
 
@@ -63,7 +56,7 @@ All other top level entries in a file parsing template are currently ignored by 
 
 ### Warning
 
-Since the strings starting with "$" are considered to be path substituitions, the strings starting with "$", including "$" alone, are not allowed as keys / attribute names in the source data file, because they cannot be used in the proper path within the source object definition. The JSON format, however, allows such keys / attributes. Therefore, the **JSON_Parser._loadFile**() method automatically replaces all encountered "$" characters in the source file into "%" characters. It must be taken into account during the creation of the mapping template. For instance, if the 'original' path within the JSON object looks like "a.$.b", i.e. path within such dictionary {"a" : {"$" : {"b" : "some_value"}}}, must be specified as "a.%.b" because the key "$" will be automatically replaced by "%".
+Since the strings starting with "$" are considered to be path substitutions, the strings starting with "$", including "$" alone, are not allowed as keys / attribute names in the source data file, because they cannot be used in the proper path within the source object definition. The JSON format, however, allows such keys / attributes. Therefore, the **JSON_Parser._loadFile**() method automatically replaces all encountered "$" characters in the source file into "%" characters. It must be taken into account during the creation of the mapping template. For instance, if the 'original' path within the JSON object looks like "a.$.b", i.e. path within such dictionary {"a" : {"$" : {"b" : "some_value"}}}, must be specified as "a.%.b" because the key "$" will be automatically replaced by "%".
 
 ## Templates Index
 
@@ -82,8 +75,8 @@ The search indexes are the sets of templates describing how a proper file parsin
 A search index is a list (array) of dictionaries. Each search index entry (dictionary) describes a structure of the source file, which can match one or more entries in the **index.json** file, thus - the corresponding file parsing templates. Each must have:
 
 * at least, one or both elements with the keys "SearchTags" / "Markers"
-  - "Markers" entry`s bound value is a list of lists of, at least, 2 elements each, whith the first element of the nested list being the expected value and the rest (one or more elements) - the path to an element of the source object, which value is to be compared with the expected one
-  - "SearchTags" entry`s bound value is a flat dictionary of string keys and list of lists bound values, whith each nested list being a path to an element of the source object
+  - "Markers" entry`s bound value is a list of lists of, at least, 2 elements each, with the first element of the nested list being the expected value and the rest (one or more elements) - the path to an element of the source object, which value is to be compared with the expected one
+  - "SearchTags" entry`s bound value is a flat dictionary of string keys and list of lists bound values, with each nested list being a path to an element of the source object
 * (optionally) an element with the key "FixedTags" with the bound value as a flat dictionary or string keys and any JSON allowed types as the bound values
 
 All required "Markers" must be present in the source object, e.g. the entry
@@ -122,16 +115,16 @@ If more than one possible path is indicated, they are tried in the same order as
 
 If the source object contains all required elements ("Markers" and at least one existing path for each "SearchTags" element) a search pattern is formed using all entries from the "SearchTags" - tag name : extracted value pairs. If the entry "FixedTags" is present, all key : value pairs from it are added into the search pattern dictionary. The special entries "Type" : "XML" or "Type" : "JSON" are added automatically, depending on which parser class - JSON_Parser or XML_Parser - is used.
 
-The entries in the **index.json** file are checked against the formed search pattern dictionary in the same order, as they are defined. The first entry, which has all the key : value pairs from the search pattern dictionary is selected, and the corresponing template file is loaded.
+The entries in the **index.json** file are checked against the formed search pattern dictionary in the same order, as they are defined. The first entry, which has all the key : value pairs from the search pattern dictionary is selected, and the corresponding template file is loaded.
 
-For instance, a "SuperTester" software generates report files in the XML format. The internal structure of the report changes between the releases of the software, therefore, different parsing templates are requried. Suppose, that tag (name) of the root element is the same, for instance, "test_report", and it always has an attribute "version", which reflects the sotware release. In this case the proper template can be chosen on the following checks:
+For instance, a "SuperTester" software generates report files in the XML format. The internal structure of the report changes between the releases of the software, therefore, different parsing templates are requried. Suppose, that tag (name) of the root element is the same, for instance, "test_report", and it always has an attribute "version", which reflects the software release. In this case the proper template can be chosen on the following checks:
 
 * the source file is of XML format (automatically during the parser selection)
 * the root element is "test_report" (tag)
 * the root element has the attribute "version"
 * the value of this attribute
 
-The template for the version 1 of the software report is stored in the file "template1.json", and for the version 2 - in the file "template2.json". The both templates are logically groupped as belonging to the "SuperTester" software data processing. Thus, the possible entries in the **index.json** file can be:
+The template for the version 1 of the software report is stored in the file "template1.json", and for the version 2 - in the file "template2.json". The both templates are logically grouped as belonging to the "SuperTester" software data processing. Thus, the possible entries in the **index.json** file can be:
 
 ```json
     ...
@@ -150,7 +143,7 @@ The template for the version 1 of the software report is stored in the file "tem
     ...
 ```
 
-The both entries in the idex file can be matched by a single entry in the search index file:
+The both entries in the index file can be matched by a single entry in the search index file:
 
 ```json
     ...
@@ -360,7 +353,7 @@ Hence, in the case of the data file "dummy.json", which is supposed to be parsed
 
 Obviously, this search pattern matches the second entry in the **index.json**, with the value of the "BaseName" key is "json_test.json".
 
-With these arrangments, the data files "dummy.xml" and "dummy.json" can be parsed with the automatic determination of the required parsing templates, which, in turn, determine the required target class:
+With these arrangements, the data files "dummy.xml" and "dummy.json" can be parsed with the automatic determination of the required parsing templates, which, in turn, determine the required target class:
 
 **example.py**
 

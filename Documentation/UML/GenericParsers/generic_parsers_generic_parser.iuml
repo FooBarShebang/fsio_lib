@@ -1,7 +1,7 @@
 !define GENERICPARSERSGENERICPARSER
 
 !ifndef CLASSES
-!include ../Templates/Class_templates.cuml
+!include ../Templates/Classes.cuml
 !endif
 
 class GenericParser <<PROTOTYPE>> {

@@ -1,11 +1,5 @@
 # DE001 Specification of the Values Mapping DSL
 
-## Table of Content
-
-* [Formal Definition](#Formal-Definition)
-* [Informal Definition](#Informal-Definition)
-* [Recommendations for Parsers and Mappers Implementation](#Recommendations-for-Parsers-and-Mappers-Implementation)
-
 ## Formal Definition
 
 The formal definitions are described using the slightly modified Augmented Bakus-Naur Form notation, see see [RFC 5234](https://tools.ietf.org/html/rfc5234) or [Wikipedia](https://en.wikipedia.org/wiki/Augmented_Backus%E2%80%93Naur_form). The single addition to the original specification of the ABNF is the *exclusion*. The binary operator "^" can be used between a range of terminal values on the left hand, and a single terminal value or a range of the terminal values on the right hand - in the sense of any terminal value from the left-hand range except one or more values.
@@ -37,10 +31,10 @@ STR-NUMBER          = DQUOTE NUMBER DQUOTE
                         ; quoted decimal number
 
 PATH-STRING         = DQUOTE "$" 1*(ALPHA / DIGIT) DQUOTE
-                        ; proper name of a substituion path string
+                        ; proper name of a substitution path string
 
 INCLUDE-STRING      = DQUOTE "#" 1*(ALPHA / DIGIT) DQUOTE
-                        ; proper name of a substitution dicitonary
+                        ; proper name of a substitution dictionary
 
 FILE-STRING         = DQUOTE 1*VCHAR "." 1*4ALPHA DQUOTE
                         ; proper name of an import file
@@ -114,7 +108,7 @@ The mapping DSL describes the rules of syntax for forming dictionaries of the ma
 
 A minimal mapping dictionary contains one or more nested dictionaries stored as values paired to string keys. The names of the keys are interpreted by the parser, which use this mapping dictionary, in order to decide which of the nested dictionaries to use and to which target object to apply. Thus, these names may be any valid strings.
 
-The nested dictionaries themselves describe the rules on which (nested) attribute / element of the source object is to mapped on which (nested) attribute / element of the target object. The keys must be strings (due to JSON syntax): either a proper Python identifier (for target object attributes or dictionary keys) or a non-negative integer number (index of an element of a container type) taken into double quotes. The values paired to the keys might be either paths to the corresponding attribute / element of the source object (for the *end nodes* of the target object, e.g. numbers, strings or boolean types) or nested dictionaries of the same structure (for the attributes / elements of the target object referencing a nested containter / structured object). This definition is recursive, and it allows an arbitrary level of nesting. Naturally, each key value may be present only once amongst the keys of any dictionary, but it is allowed amongst the keys of the ancestors, descendants or siblings of this particular dictionary.
+The nested dictionaries themselves describe the rules on which (nested) attribute / element of the source object is to mapped on which (nested) attribute / element of the target object. The keys must be strings (due to JSON syntax): either a proper Python identifier (for target object attributes or dictionary keys) or a non-negative integer number (index of an element of a container type) taken into double quotes. The values paired to the keys might be either paths to the corresponding attribute / element of the source object (for the *end nodes* of the target object, e.g. numbers, strings or boolean types) or nested dictionaries of the same structure (for the attributes / elements of the target object referencing a nested container / structured object). This definition is recursive, and it allows an arbitrary level of nesting. Naturally, each key value may be present only once amongst the keys of any dictionary, but it is allowed amongst the keys of the ancestors, descendants or siblings of this particular dictionary.
 
 The path to a source (nested) attribute can be
 
@@ -127,7 +121,7 @@ Again, the definition is recursive, which allows arbitrary level of nesting. Str
 
 * 1 OR [1] - the source object is a container (sequence), and its 2nd element (index 1) is requested, i.e. *source*[1]
 * "a" OR ["a"] - the source is a structured object and the value of its attribute "a" is requested, i.e. *source*.a, OR the source is a dictionary and the value paired to its key "a" is requested, i.e. *source*["a"]
-* "a.b" OR ["a", "b"] - the source is a nested strucutured object and the value of *source.a.b" is requested, OR the source is a nested dictionary and the value *source*\["a"\]\["b"\] is requested, OR *source*["a"].b OR *source*.a["b"]
+* "a.b" OR ["a", "b"] - the source is a nested structured object and the value of *source.a.b" is requested, OR the source is a nested dictionary and the value *source*\["a"\]\["b"\] is requested, OR *source*["a"].b OR *source*.a["b"]
 * {"name" : "test", "pass" : true} OR [{"name" : "test", "pass" : true}] - the source is a sequence (or compatible) object containing dictionaries / structured objects as its element, the required element must have the key / attribute "name" and its value must be "test" as well as the key / attribute "pass" with the value True; this pattern allows selection of the element with known *properties* but unknown index from a sequence. **Warning**: a 'choice dictionary' may be only an element of a sequence, not the 'top'(single) element of the path`s definition.
 
 On the more advanced level the top level dictionary may have a *path substitution* entry - a plain dictionary paired to the special key "PATHS". Each entry in this plain dictionary is a pair of string key and a *path* value as defined above. Each string key must start with "$". The actual mapping dictionaries may use these keys ("$" strings) as a substitution of a part of or the entire path to the source attribute / element. Thus, following two definitions are identical:
@@ -233,32 +227,32 @@ Finally, *extra entries* may be defined at the top level as key : values pairs w
 The recommended order of the parsing of a mapping definition stored in a JSON file:
 
 * Load the file into an in-memory dictionary object
-* The not found file or an excepion raised by JSON parser / loader is an error situation, and it must result in an exception
+* The not found file or an exception raised by JSON parser / loader is an error situation, and it must result in an exception
 * If the "PATHS" key is present - *path substitutions*
-  - sort the substitions definitions by the amount of other substitutions used in them
+  - sort the substitutions definitions by the amount of other substitutions used in them
   - start with the definitions using 0 other substitutions and use them to (partially) resolve the remaining definitions
-  - Each round of the *already resolved* definitions application to another substitutions must yield at least one new *fully resolved* substituion definition
+  - Each round of the *already resolved* definitions application to another substitutions must yield at least one new *fully resolved* substitution definition
   - Repeat the process until all definitions are resolved or no more new definitions can be resolved
     + if not all substitution definitions can be resolved - the circular dependence exists in their definitions; such situation is an error, and it must result in an exception
 * If the "INCLUDES" key is present - *value substitutions*
   - For each entry in the substitution definitions import the corresponding file; it may be implemented as the recursive call
-  - If a substituion entry is defined only as a path to a file - replace this string value by the entire content of the imported JSON file - a proper Python type
-  - If a sustitution entry is defined as a path to a file and a path to an element within the object imported from that file - retrieve the value of the element referenced by the path - replace the definition of the substitution by that value
+  - If a substitution entry is defined only as a path to a file - replace this string value by the entire content of the imported JSON file - a proper Python type
+  - If a substitution entry is defined as a path to a file and a path to an element within the object imported from that file - retrieve the value of the element referenced by the path - replace the definition of the substitution by that value
     + if the required element is not found within the imported object - raise an exception
 * Select all entries defining the actual *mappings* and ignore the *extras*
   - Apply the *path substitutions* and the *value substitutions* to the mapping definitions
   - Apply incremental additions, if any is defined:
     + Add new (nested) entries to the corresponding dictionaries
-    + An already exisiting entry with the same path within the *target* object is to be overwritten
-  - Apply incremental removals, if any is defined - remove the corresping mapping definition by the given path within the *target* object
-  - Flatten and unify the paths of each entry within each mapping definition dictionary - each path to an element / attribute of the *source* object is a list of string, numeric or dictionary elements, whith each element referencing only a single level of the nesting
+    + An already existing entry with the same path within the *target* object is to be overwritten
+  - Apply incremental removals, if any is defined - remove the corresponding mapping definition by the given path within the *target* object
+  - Flatten and unify the paths of each entry within each mapping definition dictionary - each path to an element / attribute of the *source* object is a list of string, numeric or dictionary elements, with each element referencing only a single level of the nesting
     + The improper defined path, i.e. containing not allowed elements, is an error situation, which must result in an exception
 * Either remove the "PATHS", "INCLUDES" and incremental addition / removal entries; OR create a new dictionary object and copy the actual *mapping definition* entries (now fully resolved) and *extra* entries into it
-* Return a dictionary containing only the *mapping definition* and *extra* entires
+* Return a dictionary containing only the *mapping definition* and *extra* entries
 
 Recommendations for the mapping implementation:
 
-* The mapping rules assume that for each rule the corresponding elements / attributes exist in both the *source* and *target* objects; a not found element / atttribute in either of them is an indication of:
+* The mapping rules assume that for each rule the corresponding elements / attributes exist in both the *source* and *target* objects; a not found element / attribute in either of them is an indication of:
   - The improper mapping rule definition
   - OR the improper / unexpected structure of the corresponding object
 * A *strict mode* mapper should, at least, report such situations or even raise an exception
@@ -272,4 +266,4 @@ Recommendations for the mapping implementation:
   - Path element given by a string (name of an element / attribute) should be looked up by that name in the following order:
     + amongst the *children nodes* of the XML node
     + amongst the usual attributes of the XML node
-    + amongst the 'text' and 'tail' of the XML node (as specail attributes)
+    + amongst the 'text' and 'tail' of the XML node (as special attributes)

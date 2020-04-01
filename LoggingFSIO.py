@@ -75,8 +75,9 @@ class ConsoleLogger(object):
     By default, the logger event logging level is set to logging.DEBUG, but it
     can be changed at any moment using inherited method setLevel() as well as
     during the instantiation. The logging into console is enabled at the level
-    logging.INFO. The console logging level can be changed, as well as the
-    console logging may be entirely suppressed and then re-enabled.
+    passed as the optional keywird argument of the initialization method (
+    defaults to logging.DEBUG). The console logging level can be changed, as
+    well as the console logging may be entirely suppressed and then re-enabled.
     
     Any class instance has a hidden 'dummy' handler of NullHandler class, thus
     the real console logging handler can be disabled without complains from the
@@ -131,7 +132,7 @@ class ConsoleLogger(object):
     def __init__(self, strName, level = logging.DEBUG):
         """
         Initialization method, which sets the logger instance name and logging
-        level.
+        level of the console output handler.
         
         Note that due to the support of the loggers ancestor - descendant
         hierarchy the names with the dots are supposed to indicate such relation
@@ -151,10 +152,10 @@ class ConsoleLogger(object):
         Version 0.1.0.0
         """
         self.__dict__['_logger'] = logging.getLogger(strName)
-        self._logger.setLevel(level)
+        self._logger.setLevel(logging.DEBUG)
         self.addHandler(logging.NullHandler()) #dummy
         self.console = logging.StreamHandler()
-        self.console.setLevel(logging.INFO)
+        self.console.setLevel(level)
         self._setFormatNoLineCode()
         self.enableConsoleLogging()
     
@@ -476,8 +477,9 @@ class DualLogger(ConsoleLogger):
     By default, the logger event logging level is set to logging.DEBUG, but it
     can be changed at any moment using inherited method setLevel() as well as
     during the instantiation. The logging into console is enabled at the level
-    logging.INFO. The console logging level can be changed, as well as the
-    console logging may be entirely suppressed and then re-enabled.
+    passed as the optional keyword argument of the initialization method 
+    defaults to logging.DEBUG). The console logging level can be changed, as
+    well as the console logging may be entirely suppressed and then re-enabled.
     
     The logging into a file is disabled initially unless explicitly asked
     otherwise during the instantiation, whilst the default file logging level is
@@ -858,7 +860,7 @@ class LoggingFSIO(object):
         """
         Method to create recursively (all nested levels) a folder specified by
         relative or absolute path passed as the argument. If this end leaf
-        folder already exists, the method simply return the success status
+        folder already exists, the method simply returns the success status
         (error code 0) with the corresponding string message.
         
         Relies upon the Standard Python Library function os.makedirs(). If this
@@ -1083,7 +1085,12 @@ class LoggingFSIO(object):
             cls._Logger.error(strError)
         else:
             _strFilePath = os.path.abspath(strFilePath)
-            if not os.path.isfile(_strFilePath):
+            if os.path.isdir(_strFilePath):
+                iError = 3
+                strError = '{} {} is a directory'.format(
+                                        cls._dictErrors[iError], _strFilePath)
+                cls._Logger.error(strError)
+            elif not os.path.isfile(_strFilePath):
                 iError = 2
                 strError = '{} {}'.format(cls._dictErrors[iError], _strFilePath)
                 cls._Logger.error(strError)

@@ -1,0 +1,34 @@
+@startuml fs_maintenance_copy_non_present
+
+title Activity Diagram of the Function fsio_lib.fs_maintenance.CopyNonPresent()
+
+start
+
+:<b>Target</b> - string, path to the 'target' directory
+<b>Source</b> - string, path to the 'source' directory<
+
+:Make tree structure dictionaries of the 'target' and 'source' folders, group files by base filenames\nand md5 check-sums, see function MakeFolderDictionary()|
+
+:Re-arrange the 'target' dictionary by md5 check-sums as the keys and the\nlists / tuples of the base filename, relative sub-path and last modification date-time stamp;
+
+:Make a list of all unique base filenames in all (nested) sub-folders of the 'target';
+
+while (for each base filename + check-sum in the 'source' dictionary)
+    if (same pair is not found in the 'target' folder ?) then (Yes)
+        if (several copies are present in the 'source' folder?) then (True)
+            :select one with the latest modification date-time stamp;
+        endif
+
+        if (file with the same base filename is present in any sub-folder of 'target'?) then (True)
+            :find a minimal positive integer <b>i</b> such\nthat for the orignal file 'name.ext'\nthe filename 'name_i.ext' is not yet\nused in the 'target' folder;
+
+            :copy file using the new filename into the\n'root' of 'target' with shutils.copy2();
+        else (False)
+            :copy file using the original base filename into the\n'root' of 'target' folder with shutils.copy2();
+        endif
+    endif
+end while (Done)
+
+stop
+
+@enduml

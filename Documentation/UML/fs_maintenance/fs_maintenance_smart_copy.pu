@@ -1,0 +1,36 @@
+@startuml fs_maintenance_smart_copy
+
+title Activity Diagram of Function fsio_lib.fs_maintenance.SmartCopy()
+
+start
+
+:<b>Source</b> - string, path to a file to copy
+<b>Target</b> - string, path to a folder, where to copy<
+
+if (Folder <b>Target</b> exists?) then (No)
+    :Create the folder with all missing 'parent' folders in the path;
+endif
+
+:Determine the base file name of the <b>Source</b> file;
+
+if (File with this base filename exists in the <b>Target</b> folder?) then (Yes)
+    :Check the md5 check-sums of the files in the\n<b>Target</b> folder and of the <b>Source</b> file;
+
+    if (Check-sums are equal?) then (True)
+        :do nothing;
+    else (False)
+        while (Suffix in range '(copy)', '(copy 1)', '(copy 2)', etc.)
+            :Append this suffix to the base filename\nbefore the extension;
+
+            :Check if such file is present in <b>Target</b> folder\nuntil a non-existend filename is found;
+        end while (Found!)
+
+        :Copy this file in the <b>Target</b> folder\npreserving the attributes using this\nnew base filename;
+    endif
+else (No)
+    :Copy this file in the <b>Target</b> folder\npreserving the attributes;
+endif
+
+stop
+
+@enduml

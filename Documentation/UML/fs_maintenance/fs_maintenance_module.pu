@@ -1,0 +1,13 @@
+@startuml fs_maintenance_module
+
+title Components Diagram of the Module fsio_lib.fs_maintenance
+
+!ifndef COMPONENTS
+!include ../Templates/Components.cuml
+!endif
+
+!ifndef FSMAINTENANCE
+!include ./fs_maintenance_module.iuml
+!endif
+
+@endunl

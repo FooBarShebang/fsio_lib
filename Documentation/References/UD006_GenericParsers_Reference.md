@@ -1,12 +1,4 @@
-# UT005 Module GenericParsers Reference
-
-## Table of Content
-
-* [Scope](#Scope)
-* [Intended Functionality and Use](#Intended-Functionality-and-Use)
-* [Design and Implementation](#Design-and-Implementation)
-* [Usage](#Usage)
-* [API Reference](#API-Reference)
+# UD006 Module GenericParsers Reference
 
 ## Scope
 
@@ -15,9 +7,9 @@ This document describes the design, intended usage, implementation details and A
 Implemented 'public' objects:
 
 * Prototype singleton class **GenericParser** with the public class methods
-  - **parseSingleObject**()
-  - **parseFile**()
-  - **parseManyFiles**()
+  * **parseSingleObject**()
+  * **parseFile**()
+  * **parseManyFiles**()
 * Singleton class **TSV_Parser** derived from **GenericParser**
 * Singleton class **JSON_Parser** derived from **GenericParser**
 * Singleton class **XML_Parser** derived from **JSON_Parser**
@@ -26,7 +18,7 @@ Implemented 'public' objects:
 
 ## Intended Functionality and Use
 
-The purpose of this module is to facilitate the parsing of the TSV / JSON / XML files of *a priori* known and often used internal structure onto specific structure objects by means of the file parsing templates containing the mapping rules. In short, this is a front-end for the module *StructureMapping* with added functionality of the automatic source file structure recognition and selection of the proper parsing templates and the target object type / class. The module provides different levels of the process automatization / facilitation.
+The purpose of this module is to facilitate the parsing of the TSV / JSON / XML files of *a priori* known and often used internal structure onto specific structure objects by means of the file parsing templates containing the mapping rules. In short, this is a front-end for the module *StructureMapping* with added functionality of the automatic source file structure recognition and selection of the proper parsing templates and the target object type / class. The module provides different levels of the process automation / facilitation.
 
 One can work directly with the module *fsio_lib.StructureMapping*: load the content of the source file using standard JSON (module *json* of the Standard Library) or XML (module xml.etree.ElementTree) or custom TSV parsers, manually define or load the mapping rules dictionary using the function *StructureMapping.LoadDefinition*(), create an instance of the target object and perform the mapping using the function *StructureMapping.MapValues*().
 
@@ -34,7 +26,7 @@ The lowest level of the functionality of this module is to wrap the source file 
 
 If the file parsing template containing the mapping rules also defines the intended target class / type, the user can still use any desired but compatible target class / type, or to omit the target class / type argument of the corresponding class methods call.
 
-It is also possible to select the file parsing template based on the structure of the source file, but this functionality relies on the special search patterns (meta-templates), which are to be defined by the user, see [DE002 specifications](./DE002_Mapping_Template_Files_Specification.md). In such a case, the user does not have to specify the file processing template.
+It is also possible to select the file parsing template based on the structure of the source file, but this functionality relies on the special search patterns (meta-templates), which are to be defined by the user, see [DE002 specifications](../Design/DE002_Mapping_Template_Files_Specification.md). In such a case, the user does not have to specify the file processing template.
 
 If the required file parsing template can be determined based on the source file content, and this template defines the intended target class / type, the user can only provide the path to a file without the target type and mapping rules.
 
@@ -42,23 +34,19 @@ Finally, the required parsing class can also be selected automatically based, at
 
 Additionally, a batch processing of the source files is supported. The user has to provide the path to the source data folder and the list of the base file names within this folder - all those files will be processed.
 
-The Use Case Diagram in [Illustration 1](#ill1) provides an overview of the supported modes of operation.
+The Use Case Diagram provides an overview of the supported modes of operation.
 
-<a id="ill1">Illustration 1</a>
-
-![Illustration 1](./UML/GenericParsers/generic_parsers_use_cases.png)
+![Illustration 1](../UML/GenericParsers/generic_parsers_use_cases.png)
 
 ## Design and Implementation
 
-The functionality provided by the module is implemented as class methods of 3 singleton classes derived from the prototype singleton class (see [Illustration 2](#ill2)) and 2 functions wrapping the specific format parsing class methods.
+The functionality provided by the module is implemented as class methods of 3 singleton classes derived from the prototype singleton class and 2 functions wrapping the specific format parsing class methods.
 
-<a id="ill2">Illustration 2</a>
-
-![Illustration 2](./UML/GenericParsers/generic_parsers_classes.png)
+![Illustration 2](../UML/GenericParsers/generic_parsers_classes.png)
 
 All public class methods are implemented generically in the prototype class **GenericParser**, whereas the specialized sub-classes only re-implement / extend the functionality of the special 'private' helper class methods *_getHints*() and *_loadFile*().
 
-The public class method *parseSingleObject*() in [Illustration 3](#ill3) is a wrapper for the function *StructureMapping.MapValues*() but it requires the target class / type instead of an instance of the target object as its argument. This method performs basic sanity data checks on the passed file parsing template ([Illustration 4](#ill4)) that:
+The public class method *parseSingleObject*() is a wrapper for the function *StructureMapping.MapValues*() but it requires the target class / type instead of an instance of the target object as its argument. This method performs basic sanity data checks on the passed file parsing template that:
 
 * it is a dictionary
 * it has the key "DataMapping"
@@ -68,26 +56,22 @@ The passed target class / type is instantiated into the target object, and the d
 
 This method also accepts the optional (keyword) arguments: a logger object and boolean flags regulating the strictness of the mapping, which are passed into the *MapValues*() function as well.
 
-<a id="ill3">Illustration 3</a>
+![Illustration 3](../UML/GenericParsers/generic_parsers_generic_parser_parsesingleobject.png)
 
-![Illustration 3](./UML/GenericParsers/generic_parsers_generic_parser_parsesingleobject.png)
+![Illustration 4](../UML/GenericParsers/generic_parsers_generic_parser_checktemplate.png)
 
-<a id="ill4">Illustration 4</a>
+The public class method *parseFile*() is the core functionality of the entire module. The user is supposed to provide the path to a file to be processed (mandatory), whereas the target type / class and file parsing template are optional. This method also accepts the optional (keyword) arguments: a logger object and boolean flags regulating the strictness of the mapping. Note that the default value for the flag for the Strict Target Mode is None, and in this case the method itself determines its True / False value based on the target type required by user and suggested by the template.
 
-![Illustration 4](./UML/GenericParsers/generic_parsers_generic_parser_checktemplate.png)
-
-The public class method *parseFile*() in [Illustration 5](#ill5) is the core functionality of the entire module. The user is supposed to provide the path to a file to be processed (mandatory), whereas the target type / class and file parsing template are optional. This method also accepts the optional (keyword) arguments: a logger object and boolean flags regulating the strictness of the mapping. Note that the default value for the flag for the Strict Target Mode is None, and in this case the method itself determines its True / False value based on the target type required by user and suggested by the template.
-
-At first, the basic sanity data checks are performed on the received path to the source file, see [Illustration 6](#ill6):
+At first, the basic sanity data checks are performed on the received path to the source file:
 
 * it a string
 * it points to an existing file
 
-After that the 'private' helper method *_getHints*() ([Illustration 7](#ill7)) is called with the None value as the first argument and the received template argument (or the default None value) as its arguments. This helper method returs a dictionary of parsing 'hints', which is passed together with the path to the source file into another helper method *_loadFile*().
+After that the 'private' helper method *_getHints*() is called with the None value as the first argument and the received template argument (or the default None value) as its arguments. This helper method returns a dictionary of parsing 'hints', which is passed together with the path to the source file into another helper method *_loadFile*().
 
 The 'private' method *_loadFile*() is supposed to return a list of source data objects, e.g. in the case of a TSV file each line (row) is considered as a single source data object, or each dictionary element in the JSON file storing an array (list) of dictionaries. **Note**, that the method *_loadFile*() of the prototype class **GenericParser** simply returns an empty list.
 
-If the returned by the *_loadFile*() method list is empty, it is simply returned as the result of the method *parseFile*(). Otherwise, the first element of it is passed together with the template again into the method *_getHints*(). The classes JSON_Parser and XML_Parser derived from this prototype extend the method *_getHints*() such that adiitional hints can be obtained based on the structure of the source data object, including the intended file parsing template as well as the suggested target class / type.
+If the returned by the *_loadFile*() method list is empty, it is simply returned as the result of the method *parseFile*(). Otherwise, the first element of it is passed together with the template again into the method *_getHints*(). The classes JSON_Parser and XML_Parser derived from this prototype extend the method *_getHints*() such that additional hints can be obtained based on the structure of the source data object, including the intended file parsing template as well as the suggested target class / type.
 
 The following situations result in the **ValueError** exception being raised:
 
@@ -99,35 +83,29 @@ On the other hand, the following situations are legal:
 * the user did not specify the file parsing template, but it is determined on the basis of the source data object - the automatically determined template is used for the further data processing
 * the user did not specify the target class / type, but the template suggests one - the type / class suggested by the template is used for the further data processing
 
-The "IS" / "IS NOT" relation between the target class / type specified by the user and suggested by the template defines the effective value for the Strict Targer Mode if the corresponding argument was not provided or the None value was passed:
+The "IS" / "IS NOT" relation between the target class / type specified by the user and suggested by the template defines the effective value for the Strict Target Mode if the corresponding argument was not provided or the None value was passed:
 
 * User did not specify the target class but the templates suggests one -> the flag is set to True
 * User specified the target class:
-  - the template has no suggestions for the target class / type -> the flag is set to True
-  - the template suggests the same target class / type -> the flag is set to True
-  - the template suggests different target class / type -> the flag is set to False
+  * the template has no suggestions for the target class / type -> the flag is set to True
+  * the template suggests the same target class / type -> the flag is set to True
+  * the template suggests different target class / type -> the flag is set to False
 
 Note that the explicitly specified True / False values of the Strict Target Mode flag are not affected, neither are the other two flags.
 
 After that each element in the list returned by the method *_loadFile*() is processed using the method *parseSingleObject*() and the obtained instances of the target class / type with the data from the corresponding source objects mapped onto them are packed into a list, which is returned.
 
-<a id="ill5">Illustration 5</a>
+![Illustration 5](../UML/GenericParsers/generic_parsers_generic_parser_parsefile.png)
 
-![Illustration 5](./UML/GenericParsers/generic_parsers_generic_parser_parsefile.png)
+![Illustration 6](../UML/GenericParsers/generic_parsers_generic_parser_checkfile.png)
 
-<a id="ill6">Illustration 6</a>
+![Illustration 7](../UML/GenericParsers/generic_parsers_generic_parser_gethints.png)
 
-![Illustration 6](./UML/GenericParsers/generic_parsers_generic_parser_checkfile.png)
+The helper method *_getHints*() of the prototype class **GenericParser** requires two arguments: a source data object and the file parsing template dictionary. Both values cannot be None simultaneously - the **ValueError** exception is raised. The prototype implementation of this method does not do anything with the source data object, but it analyzes the content of the file parsing template.
 
-<a id="ill7">Illustration 7</a>
+At first, it attempts to copy the "HeaderOffset" entry from the template into the 'hints' dictionary, which is later returned. If there is no such entry in the template - the "HeaderOffet" : None entry is added into the 'hints'. Then the presence of the entries "TargetClassModule" and "TargetClass" within the template is checked. If they exist they must properly reference an existing Python module and the name of a class defined in that module respectively. The method checks if the required class has been imported already into the name-space of the module. If such symbol is not found in the **globals**() dictionary, it is dynamically imported using the function *fsio_lib.dynamic_import.import_from_module*(). The reference to this class is added into the 'hints' as the value bound to the key "TargetClass".
 
-![Illustration 7](./UML/GenericParsers/generic_parsers_generic_parser_gethints.png)
-
-The helper method *_getHints*() of the prototype class **GenericParser** requires two arguments: a source data object and the file parsing template dictionary. Both values cannot be None simultatneously - the **ValueError** exception is raised. The prototype implementation of this method does not do anything with the source data object, but it analizes the content of the file parsing template.
-
-At first, it attempts to copy the "HeaderOffset" entry from the template into the 'hints' dictionary, which is later returned. If there is no such entry in the template - the "HeaderOffet" : None entry is added into the 'hints'. Then the presence of the entries "TargetClassModule" and "TargetClass" within the template is checked. If they exist they must properly reference an existing Python module and the name of a class defined in that module respectively. The method checks if the required class has been imported already into the namespace of the module. If such symbol is not found in the **globals**() dictionary, it is dynamically imported using the function *fsio_lib.dynamic_import.import_from_module*(). The reference to this class is added into the 'hints' as the value bound to the key "TargetClass".
-
-The public class method **parseManyFiles**() in [Illustration 8](#ill8) is designed to parse several files within a single folder, which are specified by the path to the folder and the list of their base file names. Basically, it performs the data sanity checks on the paths and calls the method **parseFile**() for each file separately. The processed data is stored in and returned as an instance of the **collections.OrderedDict** with the base names as keys and the corresponding lists of the instances of the target class / type (mapped data) as their bound values.
+The public class method **parseManyFiles**() is designed to parse several files within a single folder, which are specified by the path to the folder and the list of their base file names. Basically, it performs the data sanity checks on the paths and calls the method **parseFile**() for each file separately. The processed data is stored in and returned as an instance of the **collections.OrderedDict** with the base names as keys and the corresponding lists of the instances of the target class / type (mapped data) as their bound values.
 
 The input data sanity checks performed by the method itself are:
 
@@ -136,46 +114,36 @@ The input data sanity checks performed by the method itself are:
 * base names argument is a sequence (not a string)
 * each element in the list of the base names is a string
 
-<a id="ill8">Illustration 8</a>
-
-![Illustration 8](./UML/GenericParsers/generic_parsers_generic_parser_parsemanyfiles.png)
+![Illustration 8](../UML/GenericParsers/generic_parsers_generic_parser_parsemanyfiles.png)
 
 The specialized class **TSV_Parser** redefines only the helper method *_loadFile*(), but not the method *_getHints*(), therefore their public methods *parseFile*() and *parseManyFile*() require explicit passing of the file parsing template argument. The reason is that this parser needs to know the length of the header (how many first lines to skip) before it can load the file and the template cannot be reliably determined on the source file content in many practical cases.
 
-The redefined method *_loadFile*() in [Illustration 9](#ill9) wraps the function *fsio_lib.locale_fsio.LoadTable*(), which can cope with CR / LF and CRLF line endings, Dutch or international number notation, and performs automatic conversion of the quoted numbers (strings) into the proper Python numeric types. Note that if the header offset is not (properly) defined by the file parsing template the 0 (zero) value is used, meaning that there is no header in the file.
+The redefined method *_loadFile*() in wraps the function *fsio_lib.locale_fsio.LoadTable*(), which can cope with CR / LF and CRLF line endings, Dutch or international number notation, and performs automatic conversion of the quoted numbers (strings) into the proper Python numeric types. Note that if the header offset is not (properly) defined by the file parsing template the 0 (zero) value is used, meaning that there is no header in the file.
 
-<a id="ill9">Illustration 9</a>
+![Illustration 9](../UML/GenericParsers/generic_parsers_tsv_parser_loadfile.png)
 
-![Illustration 9](./UML/GenericParsers/generic_parsers_tsv_parser_loadfile.png)
+The specialized class **JSON_Parser** redefines the helper methods *_getHints*() and *_loadFile*(). The redefined method *_getHints*() allows both the data object and the template being None, in which case an empty 'hints' dictionary is returned. If, at least, one of these arguments is not None - the same method of its super class (**GenericParser**) is called to form the 'hints' dictionary. If the source data object argument is not None but the template is not provided (None), the method attempts to determine the appropriate parsing template based on the content of the passed source data object.
 
-The specialized class **JSON_Parser** redefines the helper methods *_getHints*() and *_loadFile*(). The redefined method *_getHints*() ([Illustration 10](#ill10)) allows both the data object and the template being None, in which case an empty 'hints' dictionary is returned. If, at least, one of these arguments is not None - the same method of its super class (**GenericParser**) is called to form the 'hints' dictionary. If the source data object argument is not None but the template is not provided (None), the method attemps to determine the appropriate parsing template based on the content of the passed source data object.
-
-The method itterates from the list of the search index patterns. Each pattern defines a set of (nested) elements, which must all be present in the source data object. There are two types of such elements:
+The method iterates from the list of the search index patterns. Each pattern defines a set of (nested) elements, which must all be present in the source data object. There are two types of such elements:
 
 * *Markers* - an element specified by a path within the source object must be present and it must have the specified value
 * *SearchTags* - for each tag there can be more than one possible paths, but, at least, one of them must be valid - i.e. such an element (specified by a path) exists in the source data object - and its value combined with the tag name will be added into the search pattern dictionary
 
-If the structure of the source object matches the search index pattern, the template search pattern dictionary is formed from the *SearchTags* and the corresponding found values. The search index dictionary can also define *FixedTags* (key : value pairs), which will be added to the formed search pattern dictionary. Note the special entry "Type" : "JSON" (or "Type" : "XML" for the sub-class **XML_Parser**) is added automatically. See [DE002 specifications](./DE002_Mapping_Template_Files_Specification.md) for more detailed information.
+If the structure of the source object matches the search index pattern, the template search pattern dictionary is formed from the *SearchTags* and the corresponding found values. The search index dictionary can also define *FixedTags* (key : value pairs), which will be added to the formed search pattern dictionary. Note the special entry "Type" : "JSON" (or "Type" : "XML" for the sub-class **XML_Parser**) is added automatically. See [DE002 specifications](../Design/DE002_Mapping_Template_Files_Specification.md) for more detailed information.
 
-The formed search pattern dictionary is matched against the entires in the tempates index, which reference the actual file parsing template files. The first index entry found, which has all key : value pairs defined by the search pattern dictionary, is used to obtain the path to the template file. The template file is loaded using the function *fsio_lib.StructureMapping.LoadDefinition*() and the obtained template dictionary is stored in the 'hints' dictionary. After that the *_getHints*() method of the super class is called again in order to update the 'hints', i.e. to obtain the suggested target class / type.
+The formed search pattern dictionary is matched against the entries in the templates index, which reference the actual file parsing template files. The first index entry found, which has all key : value pairs defined by the search pattern dictionary, is used to obtain the path to the template file. The template file is loaded using the function *fsio_lib.StructureMapping.LoadDefinition*() and the obtained template dictionary is stored in the 'hints' dictionary. After that the *_getHints*() method of the super class is called again in order to update the 'hints', i.e. to obtain the suggested target class / type.
 
-<a id="ill10">Illustration 10</a>
+![Illustration 10](../UML/GenericParsers/generic_parsers_json_parser_gethints.png)
 
-![Illustration 10](./UML/GenericParsers/generic_parsers_json_parser_gethints.png)
+The redefined helper method *_loadFile*() of the **JSON_Parser** class loads the entire content of the source file as a text into a buffer string and iterates through it as a stream of characters. Each encountered "$" character is replaced by "%". The opening and closing brackets - "{" and "}" - are counted in order to define the indexes within the buffer string, where outermost dictionary elements with the file start and end. The buffer string is sliced using these indexes, and each individual sub-string containing a dictionary is parsed using *json.loads*() function. The results are arranged in a list of dictionaries. Thanks to this approach the improperly formed JSON format 'memory dumps' or alike files containing sequences of dictionaries like "{...} {...} {...}" or "{...}, {...}, {...}" are treated as proper lists (arrays) of dictionaries "[{...}, {...}, {...}]". A proper formed JSON file containing only a dictionary, i.e. "{...}" is converted into 1 element list of dictionaries -> "[{...}]".
 
-The redefined helper method *_loadFile*() of the **JSON_Parser** class in [Illustration 11](#ill11) loads the entire content of the source file as a text into a buffer string and iterates through it as a stream of characters. Each encountered "$" character is replaced by "%". The opening and closing brackets - "{" and "}" - are counted in order to define the indexes within the buffer string, where outermost dictionary elements with the file start and end. The buffer string is sliced using these indexes, and each individual sub-string containing a dictionary is parsed using *json.loads*() function. The results are arranged in a list of dictionaries. Thanks to this approach the improperly formed JSON format 'memory dumps' or alike files containg sequences of dictionaries like "{...} {...} {...}" or "{...}, {...}, {...}" are treated as proper lists (arrays) of dictionaries "[{...}, {...}, {...}]". A proper formed JSON file containing only a dictionary, i.e. "{...}" is converted into 1 element list of dictionaries -> "[{...}]".
+![Illustration 11](../UML/GenericParsers/generic_parsers_json_parser_loadfile.png)
 
-<a id="ill11">Illustration 11</a>
+The specialized class **XML_Parser** sub-classes the **JSON_Parser**, thus it inherits the redefined helper method *_getHints*(), but it redefines the helper method *_loadFile*(). This method simply wraps the call to the function *xml.etree.ElementTree.parse*(), which returns an instance of the **xml.etree.ElementTree.ElementTree** class. Its 'root' element (node), i.e. an instance of the **xml.etree.ElementTree.Element** class is placed as a single element into a list, which is returned.
 
-![Illustration 11](./UML/GenericParsers/generic_parsers_json_parser_loadfile.png)
+![Illustration 12](../UML/GenericParsers/generic_parsers_xml_parser_loadfile.png)
 
-The specialized class **XML_Parser** sub-classes the **JSON_Parser**, thus it inherits the redefined helper method *_getHints*(), but it redefines the helper method *_loadFile*() - see [Illustration 12](#ill12). This method simply wraps the call to the function *xml.etree.ElementTree.parse*(), which returns an instance of the **xml.etree.ElementTree.ElementTree** class. Its 'root' element (node), i.e. an instance of the **xml.etree.ElementTree.Element** class is palced as a single element into a list, which is returned.
-
-<a id="ill12">Illustration 12</a>
-
-![Illustration 12](./UML/GenericParsers/generic_parsers_xml_parser_loadfile.png)
-
-The aggregation function **parseFile**() in [Illustration 13](#ill13) has exactly the same signature as the corresponding method of the parser classes: the mandatory path to a file to be processed, optional target type / class, optional file parsing template, optional logger object and optional boolean flags regulating the strictness of the mapping. Note that the default value for the flag for the Strict Target Mode is None, and in this case its True / False value is determind based on the target type required by user and suggested by the template.
+The aggregation function **parseFile**() has exactly the same signature as the corresponding method of the parser classes: the mandatory path to a file to be processed, optional target type / class, optional file parsing template, optional logger object and optional boolean flags regulating the strictness of the mapping. Note that the default value for the flag for the Strict Target Mode is None, and in this case its True / False value is determined based on the target type required by user and suggested by the template.
 
 Based on the source`s file extension (converted into the lower case) the function determines the order, in which the specialized parser classes will be tried:
 
@@ -183,13 +151,11 @@ Based on the source`s file extension (converted into the lower case) the functio
 * ".xml" - XML_Parser, TSV_Parser, JSON_Parser
 * else - TSV_Parser, JSON_Parser, XML_Parser
 
-The function then attemps to parse the source file using the *parseFile*() method of each of the 3 classes in turn, until the file is properly processed (no exceptions being raised). If an exception has been raised the function tries the next parser class, otherwise - the result (list of objects) produced by the the specialized parser`s method is returned. If parsing with all three classes has failed the **ValueError** exception is raised.
+The function then attempts to parse the source file using the *parseFile*() method of each of the 3 classes in turn, until the file is properly processed (no exceptions being raised). If an exception has been raised the function tries the next parser class, otherwise - the result (list of objects) produced by the the specialized parser`s method is returned. If parsing with all three classes has failed the **ValueError** exception is raised.
 
-<a id="ill13">Illustration 13</a>
+![Illustration 13](../UML/GenericParsers/generic_parsers_parsefile.png)
 
-![Illustration 13](./UML/GenericParsers/generic_parsers_parsefile.png)
-
-The aggregation function **parseManyFiles**() has exactly the same signature as the corresponding method of the parser classes: the mandatory path to a folder, the mandatory list of the base file names within that folder, optional target type / class, optional file parsing template, optional logger object and optional boolean flags regulating the strictness of the mapping. Note that the default value for the flag for the Strict Target Mode is None, and in this case its True / False value is determind based on the target type required by user and suggested by the template. Furhtermore, its work flow is almost identical (see [Illustration 8](#ill8)) except that the function **parseFile**() is called instead of a class` method.
+The aggregation function **parseManyFiles**() has exactly the same signature as the corresponding method of the parser classes: the mandatory path to a folder, the mandatory list of the base file names within that folder, optional target type / class, optional file parsing template, optional logger object and optional boolean flags regulating the strictness of the mapping. Note that the default value for the flag for the Strict Target Mode is None, and in this case its True / False value is determined based on the target type required by user and suggested by the template. Furthermore, its work flow is almost identical, except that the function **parseFile**() is called instead of a class` method.
 
 With this arrangement the function **parseManyFiles**() can process:
 
@@ -356,8 +322,8 @@ Returns:
 
 Raises:
 
-* **TypeError**: wrong mapping dictionary format or missmatch between the structure of the target and source objects and the mapping rules
-* **ValueError**: wrong mapping dictionary format or missmatch between the structure of the target and source objects and the mapping rules or the template has no key '*DataMapping*' or the value bound to it is not a dictionary
+* **TypeError**: wrong mapping dictionary format or mismatch between the structure of the target and source objects and the mapping rules
+* **ValueError**: wrong mapping dictionary format or mismatch between the structure of the target and source objects and the mapping rules or the template has no key '*DataMapping*' or the value bound to it is not a dictionary
 * **AttributeError**: missing element of the target or source object if the corresponding flags are set to True, or an immutable element in the target object
 
 Description:
@@ -388,8 +354,8 @@ Returns:
 
 Raises:
 
-* **TypeError**: wrong mapping dictionary format or missmatch between the structure of the target and source objects and the mapping rules or the path to a file is not a string
-* **ValueError**: wrong mapping dictionary format or missmatch between the structure of the target and source objects and the mapping rules or the template has no key 'DataMapping' or the value bound to it is not a dictionary; or the file path does not reference an existing file
+* **TypeError**: wrong mapping dictionary format or mismatch between the structure of the target and source objects and the mapping rules or the path to a file is not a string
+* **ValueError**: wrong mapping dictionary format or mismatch between the structure of the target and source objects and the mapping rules or the template has no key 'DataMapping' or the value bound to it is not a dictionary; or the file path does not reference an existing file
 * **AttributeError**: missing element of the target or source object if the corresponding flags are set to True, or an immutable element in the target object
 
 Description:
@@ -433,8 +399,8 @@ Returns:
 
 Raises:
 
-* **TypeError**: wrong mapping dictionary format or missmatch between the structure of the target and source objects and the mapping rules or the path to a foler is not a string or any file name is not a string, or the list of base names is not a sequence
-* **ValueError**: wrong mapping dictionary format or missmatch between the structure of the target and source objects and the mapping rules or the template has no key '*DataMapping*' or the value bound to it is not a dictionary; or the folder path does not reference an existing folder or any referenced file there is missing
+* **TypeError**: wrong mapping dictionary format or mismatch between the structure of the target and source objects and the mapping rules or the path to a foler is not a string or any file name is not a string, or the list of base names is not a sequence
+* **ValueError**: wrong mapping dictionary format or mismatch between the structure of the target and source objects and the mapping rules or the template has no key '*DataMapping*' or the value bound to it is not a dictionary; or the folder path does not reference an existing folder or any referenced file there is missing
 * **AttributeError**: missing element of the target or source object if the corresponding flags are set to True, or an immutable element in the target object
 
 Description:
@@ -445,8 +411,8 @@ Work flow:
 * check that the specified folder exists
 * create an empty instance of **collections.OrderedDict**
 * for each file in the specified list
-  - parse this file - _parseFile() method
-  - store the base file name : returned list pair as an entry in the ordered dictionary
+  * parse this file - _parseFile() method
+  * store the base file name : returned list pair as an entry in the ordered dictionary
 * return this ordered dictionary
 
 If the target class is not specified, the suggested target class is taken from the file processing template - if this is not possible the **ValueError** is raised. Dynamically for each file.
@@ -562,8 +528,8 @@ Returns:
 
 Raises:
 
-* **TypeError**: wrong mapping dictionary format or missmatch between the structure of the target and source objects and the mapping rules or the path to a file is not a string
-* **ValueError**: wrong mapping dictionary format or missmatch between the structure of the target and source objects and the mapping rules or the template has no key 'DataMapping' or the value bound to it is not a dictionary; or the file path does not reference an existing file
+* **TypeError**: wrong mapping dictionary format or mismatch between the structure of the target and source objects and the mapping rules or the path to a file is not a string
+* **ValueError**: wrong mapping dictionary format or mismatch between the structure of the target and source objects and the mapping rules or the template has no key 'DataMapping' or the value bound to it is not a dictionary; or the file path does not reference an existing file
 * **AttributeError**: missing element of the target or source object if the corresponding flags are set to True, or an immutable element in the target object
 
 Description:
@@ -597,8 +563,8 @@ Returns:
 
 Raises:
 
-* **TypeError**: wrong mapping dictionary format or missmatch between the structure of the target and source objects and the mapping rules or the path to a foler is not a string or any file name is not a string, or the list of base names is not a sequence
-* **ValueError**: wrong mapping dictionary format or missmatch between the structure of the target and source objects and the mapping rules or the template has no key '*DataMapping*' or the value bound to it is not a dictionary; or the folder path does not reference an existing folder or any referenced file there is missing
+* **TypeError**: wrong mapping dictionary format or mismatch between the structure of the target and source objects and the mapping rules or the path to a folder is not a string or any file name is not a string, or the list of base names is not a sequence
+* **ValueError**: wrong mapping dictionary format or mismatch between the structure of the target and source objects and the mapping rules or the template has no key '*DataMapping*' or the value bound to it is not a dictionary; or the folder path does not reference an existing folder or any referenced file there is missing
 * **AttributeError**: missing element of the target or source object if the corresponding flags are set to True, or an immutable element in the target object
 
 Description:
@@ -610,8 +576,8 @@ Work flow:
 * check that the specified folder exists
 * create an empty instance of **collections.OrderedDict**
 * for each file in the specified list
-  - parse this file - **parseFile**() function
-  - store the base file name : returned list pair as an entry in the ordered dictionary
+  * parse this file - **parseFile**() function
+  * store the base file name : returned list pair as an entry in the ordered dictionary
 * return this ordered dictionary
 
 If the target class is not specified, the suggested target class is taken from the file processing template - if this is not possible the **ValueError** is raised. Dynamically for each file.

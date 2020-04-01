@@ -1,21 +1,11 @@
-# UD001 Module LoggingFSIO Reference
-
-## Table of Content
-
-* [Scope](#Scope)
-* [Intended Use and Functionality](#Intended-Use-and-Functionality)
-* [Design and Implementation](#Design-and-Implementation)
-* [API Reference](#API-Reference)
-  - [Class ConsoleLogger](#Class-ConsoleLogger)
-  - [Class DualLogger](#Class-DualLogger)
-  - [Class LoggingFSIO](#Class-LoggingFSIO)
+# UD003 Module LoggingFSIO Reference
 
 ## Scope
 
-This document describes the design, intended usage, implementation details and API of the module LoggingFSIO, which implements two custom loggers: to the console or to the console and / or a file (simultaneously) - and I/O exceptions free files operations, like copy, rename, move, delete file, etc.
+This document describes the design, intended usage, implementation details and API of the module *LoggingFSIO*, which implements two custom loggers: to the console or to the console and / or a file (simultaneously) - and I/O exceptions free files operations, like copy, rename, move, delete file, etc.
 
 * **ConsoleLogger**
-  - **DualLogger**
+  * **DualLogger**
 * **LoggingFSIO**
 
 ## Intended Use and Functionality
@@ -23,18 +13,18 @@ This document describes the design, intended usage, implementation details and A
 This module provides *exceptions free* file operations functionality:
 
 * creation of a folder by a given path
-  - all missing *parent* folders along the path are created as well
-  - if the target folder already exists, no changes occur
+  * all missing *parent* folders along the path are created as well
+  * if the target folder already exists, no changes occur
 * copying of a file from one folder to another preserving its metadata with optional change of the base name
-  - if the target file already exists it is overwritten
-  - all missing folders along the path are created as well
+  * if the target file already exists it is overwritten
+  * all missing folders along the path are created as well
 * deletion of a file
 * moving a file from one folder into another with optional change of the base name
-  - as combination of copying and deleting the original file
+  * as combination of copying and deleting the original file
 * renaming a file
-  - as the special case of the moving, when the target and source folders are the same
+  * as the special case of the moving, when the target and source folders are the same
 
-All **IOError** and **OSError** exceptions, which can occur during the operations, are converted into string error messages, which are retuned and, optionally, logged into the console and / or log file. This approach ensures continuous, non-interruptive (without not caught exceptions) but controllable batch file operations, like mass copy, etc.
+All **IOError** and **OSError** exceptions, which can occur during the operations, are converted into string error messages, which are returned and, optionally, logged into the console and / or log file. This approach ensures continuous, non-interruptive (without not caught exceptions) but controllable batch file operations, like mass copy, etc.
 
 All I/O methods return a 2-tuple of an integer error / status code and a string textual explanation as follows:
 
@@ -48,10 +38,10 @@ All I/O methods return a 2-tuple of an integer error / status code and a string 
 
 It also implements an 'extension' of the functionality of the Standard Python Library **logging**. The added functionality includes:
 
-* built-in support for and simplified interface of a dual handler logger, which can log similtaneously into two separate streams: **stdout** (console) and a file
+* built-in support for and simplified interface of a dual handler logger, which can log simultaneously into two separate streams: **stdout** (console) and a file
 * ability to change the log file on demand ('on the fly') from a user, not just by reaching the threshold file size (as with the standard log file rotation scheme)
-* ability to completely suppresse or enable output into one or both streams without changing the logging severity level of either the logger or the handler
-* well defined and verbouse structure of the issued log entries
+* ability to completely suppress or enable output into one or both streams without changing the logging severity level of either the logger or the handler
+* well defined and verbose structure of the issued log entries
 
 The dynamic disabling / (re-) enabling of the logging can be easily done with the standard loggers, as follows:
 
@@ -67,100 +57,78 @@ For the rest, the functionality of these custom loggers should be the same as of
 * Each logger has a bound logging level, which can differ from the logging level(s) of its handlers, and which can be changed dynamically
 * Each handler bound to a logger has its own logging level, which may differ from the logging level of the logger itself, and which can be changed dynamically
 * A log entry can be issued by calling one of the methods of the logger: **info**(), **debug**(), **warning**() or **error**()
-  - If the logging level of the logger is higher than the level of the issued entry, it is simply ignored by the logger
-  - Otherwise, this entry is delivered to all handlers bound to this logger
-    + If the logging level of a specific handler is higher than the level of the entry, it should be ignored by this particular handler
-    + Otherwise, the handler must send a corresponding message to its bound stream
-* A hierarchy of the loggers, i.e. 'parent - child' relation should be supported. For instaance, if there are two logers: one with the name *SomeClassLogger*, and another - with the name *SomeClassLogger.SomeMethodLogger* - the second logger is a 'child' of the first one. A log entry issued to the 'child' logger should also be received and treated by the 'parent' logger (log entries propagation); but an entry issued to the 'parent' logger should not be visible to the 'child' logger.
-  - In order to avoid the dubling of the error entries, in such situation the log entry should be handled by the 'parent' logger and not the 'child' logger, which should let it simply propagate upwards.
+  * If the logging level of the logger is higher than the level of the issued entry, it is simply ignored by the logger
+  * Otherwise, this entry is delivered to all handlers bound to this logger
+    * If the logging level of a specific handler is higher than the level of the entry, it should be ignored by this particular handler
+    * Otherwise, the handler must send a corresponding message to its bound stream
+* A hierarchy of the loggers, i.e. 'parent - child' relation should be supported. For instance, if there are two loggers: one with the name *SomeClassLogger*, and another - with the name *SomeClassLogger.SomeMethodLogger* - the second logger is a 'child' of the first one. A log entry issued to the 'child' logger should also be received and treated by the 'parent' logger (log entries propagation); but an entry issued to the 'parent' logger should not be visible to the 'child' logger.
+  * In order to avoid the doubling of the error entries, in such situation the log entry should be handled by the 'parent' logger and not the 'child' logger, which should let it simply propagate upwards.
 
 ## Design and Implementation
 
-Two custom logger classes are implemented: one bound to the console output (**stdout**) - ConsoleLogger - and the second class **DualLogger** can output to either a console, or to a file, or to both streams simultaneously using the same or different logging severity levels. The class **DualLogger** subclsasses the **ConsoleLogger** class, see [Illustration 1](#ill1). It also shows the *main* class LoggingFSIO.
+Two custom logger classes are implemented: one bound to the console output (**stdout**) - ConsoleLogger - and the second class **DualLogger** can output to either a console, or to a file, or to both streams simultaneously using the same or different logging severity levels. The class **DualLogger** subclasses the **ConsoleLogger** class, see figure below. It also shows the *main* class LoggingFSIO.
 
-<a id="ill1">Illustration 1</a>
+![Illustration 1](../UML/LoggingFSIO/fsio_lib_logging_fsio_classes.png)
 
-![Illustration 1](./UML/LoggingFSIO/fsio_lib_logging_fsio_classes.png)
+Both logger classes store a reference to an actual instance of the **logging.Logger** class in a 'private' instance attribute and redirect the attribute access methods **\_\_getattribute\_\_**() and **\_\_setattr\_\_**() such, that any data attribute (field) or method implemented for the **logging.Logger** class instance is visible and accessible as an attribute of the instances of these custom loggers, see figures below. So, from the user perspective they are wrapper objects for the standard logger.
 
-Both logger classes store a reference to an actual instance of the **logging.Logger** class in a 'private' instance attribute and redirect the attribute access methods **\_\_getattribute\_\_**() and **\_\_setattr\_\_**() such, that any data attribute (field) or method implemented for the **logging.Logger** class instance is visible and accessible as an attribute of the instances of these custom loggers, see [Illustration 2](#ill2) and [Illustration 3](#ill3). So, from the user perspective they are wrapper objects for the standard logger.
+![Illustration 2](../UML/LoggingFSIO/fsio_lib_logging_fsio_consolelogger_getattribute.png)
 
-<a id="ill2">Illustration 2</a>
-
-![Illustration 2](./UML/LoggingFSIO/fsio_lib_logging_fsio_consolelogger_getattribute.png)
-
-<a id="ill3">Illustration 3</a>
-
-![Illustration 3](./UML/LoggingFSIO/fsio_lib_logging_fsio_consolelogger_setattr.png)
+![Illustration 3](../UML/LoggingFSIO/fsio_lib_logging_fsio_consolelogger_setattr.png)
 
 With this arrangement the calls like **MyLogger.error(Message)** or **MyLogger.setLevel(Level)**, etc. become *short-cuts* (syntax sugar) for the calls **MyLogger._logger.error(Message)** or **MyLogger._logger.setLevel(Level)**, etc. respectively, assuming that **MyLogger** is an instance of either **ConsoleLogger** or **DualLogger** class.
 
-Note that for the logging at the level WARNING and higher the **ConsoleLogger** class implements own wrapper methods **warning**(), **error**(), **exception**() and **critical**(), which temporary change the format of the log entry to 3 lines, including the code line number and module, from which the log entry is issued. Then the corresponding methods of the **logging.Logger** class are called, and the format of the log entry is reset to 2 lines. The methods **info**() and **debug**() are still redirected directly to the **logging.Logger** class within the **\_\_getattribute\_\_**() method. See [Illustration 4](#ill4).
+Note that for the logging at the level WARNING and higher the **ConsoleLogger** class implements own wrapper methods **warning**(), **error**(), **exception**() and **critical**(), which temporary change the format of the log entry to 3 lines, including the code line number and module, from which the log entry is issued. Then the corresponding methods of the **logging.Logger** class are called, and the format of the log entry is reset to 2 lines. The methods **info**() and **debug**() are still redirected directly to the **logging.Logger** class within the **\_\_getattribute\_\_**() method.
 
-<a id="ill4">Illustration 4</a>
+![Illustration 4](../UML/LoggingFSIO/fsio_lib_logging_fsio_consolelogger_logging_methods.png)
 
-![Illustration 4](./UML/LoggingFSIO/fsio_lib_logging_fsio_consolelogger_logging_methods.png)
+These custom logger classes store a reference to an instance of **logging.Formater** class in the 'public' instance attribute. This formatter instance defines the format of each log entry, and it is applied to all handlers bound to this logger during the instantiation of the logger wrapper class. The handlers are created during the instantiation of the logger wrapper class as well, and they are stored (as references) in the public instance attributes: **console** (**stdout** handler - both classes) and **file_logging** (file output handler, only the **DualLogger** class). Note that the **file_logging** can reference either the **logging.FileHandler** (if the file logging is required / enabled) or the **logging.NullHandler** (if the file logging is suppressed). However, may be attached or not to the actual logger object depending on two factors: if that specific stream output is enabled or nor, and if this logger has a 'parent' or not. See further in the text after the diagrams.
 
-These custom logger classes store a reference to an instance of **logging.Formater** class in the 'public' instance attribute. This formatter instance defines the format of each log entry, and it is applied to all handlers bound to this logger during the instantiation of the logger wrapper class, see [Illustration 5](#ill5) and [Illustration 6](#ill6). The handlers are created during the instantiation of the logger wrapper class as well, and they are stored (as references) in the public instance attributes: **console** (**stdout** handler - both classes) and **file_logging** (file output handler, only the **DualLogger** class). Note that the **file_logging** can reference either the **logging.FileHandler** (if the file logging is required / enabled) or the **logging.NullHandler** (if the file logging is suppressed). However, may be attached or not to the actual logger object depending on two factors: if that specific stream output is enabled or nor, and if this logger has a 'parent' or not. See furher in the text after the diagrams.
+![Illustration 5](../UML/LoggingFSIO/fsio_lib_logging_fsio_consolelogger_init.png)
 
-<a id="ill5">Illustration 5</a>
+![Illustration 6](../UML/LoggingFSIO/fsio_lib_logging_fsio_duallogger_init.png)
 
-![Illustration 5](./UML/LoggingFSIO/fsio_lib_logging_fsio_consolelogger_init.png)
+The custom logger classes allow dynamic enabling and disabling of the output. They also support the loggers ancestor - descendant hierarchy: the names of the loggers with the dots are supposed to indicate such relation: logger 'parent.child.grandchild' is descendant of 'parent.child', which is descendant of 'parent' logger, even if it does not exist. The actual existence of the supposed ancestors affects only the message propagation, but not the creation of a logger, which can easily be an 'orphan'.
 
-<a id="ill6">Illustration 6</a>
+Thus, upon the instantiation of the logger wrapper class, the console logging handler (field **console**) is always created, but it is attached to the actual logger object only if the logger object has no 'parent', i.e. the field **parent** of the logger object references an instance of **logging.RootLogger** class.
 
-![Illustration 6](./UML/LoggingFSIO/fsio_lib_logging_fsio_duallogger_init.png)
+![Illustration 7](../UML/LoggingFSIO/fsio_lib_logging_fsio_consolelogger_enableconsolelogging.png)
 
-The custom logger clases allow dynamic enabling and disabling of the output. They also support the loggers ancestor - descendant hierarchy: the names of the loggers with the dots are supposed to indicate such relation: logger 'parent.child.grandchild' is descendant of 'parent.child', which is descendant of 'parent' logger, even if it does not exist. The actual existence of the supposed ancestors affects only the message propagation, but not the creation of a logger, which can easily be an 'orphan'.
-
-Thus, upon the instantiation of the logger wrapper class, the console logging handler (field **console**) is always created, but it is attached to the actual logger object only if the logger object has no 'parent', i.e. the field **parent** of the logger object references an instance of **logging.RootLogger** class. See [Illustration 5](#ill5) and [Illustration 7](#ill7) for details.
-
-<a id="ill7">Illustration 7</a>
-
-![Illustration 7](./UML/LoggingFSIO/fsio_lib_logging_fsio_consolelogger_enableconsolelogging.png)
-
-With this arrangement the 'descendant' loggers, e.g. **SomeClassLogger.SomeMethodLogger** (as a 'child' of **SomeClassLogger**), do not have a console handler attached to them. Even if the console output has been disable and re-enabled afterwards (see [Illustration 7](#ill7)), the console handler remains not attached as long as the logger has direct a 'parent'.
+With this arrangement the 'descendant' loggers, e.g. **SomeClassLogger.SomeMethodLogger** (as a 'child' of **SomeClassLogger**), do not have a console handler attached to them. Even if the console output has been disable and re-enabled afterwards, the console handler remains not attached as long as the logger has direct a 'parent'.
 
 _**Note**_: the dynamic disabling of the console logging is performed via the instance method **disableConsoleLogging**(), which simply removes the console handler from the list of the active handlers of the logging object using the method **logging.Logger.removeHandler**(). This **removeHandler**() is intelligent enough to ignore the handlers passed as the argument, which are not registered as active handlers of this logger object.
 
-This approach ensures, that there is no 'dubbling' of the console log entries; a log entry issued to a 'child' logger is printed out only by the 'root' logger (at the top of the hierarchy). The dynamic enabling / disabling of the *console* logging has an effect only on the 'root' logger of the hierarchy and affects all its descendant; whereas enabling / disabling of the console logging of a descendant logger has no effect at all, because they console handlers are never attached.
+This approach ensures, that there is no 'doubling' of the console log entries; a log entry issued to a 'child' logger is printed out only by the 'root' logger (at the top of the hierarchy). The dynamic enabling / disabling of the *console* logging has an effect only on the 'root' logger of the hierarchy and affects all its descendant; whereas enabling / disabling of the console logging of a descendant logger has no effect at all, because they console handlers are never attached.
 
-With the *file output handler* another approach is taken, see [Illustration 6](#ill6), [Illustration 8](#ill8) and [Illustration 9](#ill9).
+With the *file output handler* another approach is taken, as shown in the figure below.
 
-<a id="ill8">Illustration 8</a>
+![Illustration 8](../UML/LoggingFSIO/fsio_lib_logging_fsio_duallogger_enablefilelogging.png)
 
-![Illustration 8](./UML/LoggingFSIO/fsio_lib_logging_fsio_duallogger_enablefilelogging.png)
+Upon instantiation of the **DualLogger** class either an instance of the **logging.FileHandler** or an instance of the **logging.NullHandler** class is referenced by the instance attribute **file_logging** and is attached to the actual logger object, depending on if the file logging must be enabled or disabled. When the file logging is explicitly (re-) enabled the instance of the **logging.NullHandler** class referenced by the **file_logging** attribute (if this is the case) is replaced by an instance of the **logging.FileHandler** class (also in the list of the active handlers of the actual logger object). Otherwise, if the **file_logging** attribute references an instance of the **logging.FileHandler** class already, this handler is simply re-attached to the logger object.
 
-Upon instantiation of the **DualLogger** class either an instance of the **logging.FileHandler** or an instance of the **logging.NullHandler** class is referenced by the instance attribute **file_logging** and is attached to the actual logger object, depending on if the file logging must be enabled or disabled. When the file logging is explicitely (re-) enabled (see [Illustration 7](#ill7)) the instance of the **logging.NullHandler** class referenced by the **file_logging** attribute (if this is the case) is replaced by an instance of the **logging.FileHandler** class (also in the list of the active handlers of the actual logger object). Otherwise, if the **file_logging** attribute references an isntance of the **logging.FileHandler** class already, this handler is simply re-attached to the logger object.
+When the file logging is disabled at the 'run-time', the handler referenced by the attribute **file_logging** is detached from the logger object only if it is an instance of the **logging.FileHandler** class, since the **logging.NullHandler** class does not output any log entries anyway.
 
-When the file logging is disabled at the 'run-time', the handler referenced by the attribute **file_logging** is detached from the logger object only if it is an intance of the **logging.FileHandler** class, since the **logging.NullHandler** class does not output any log entries anyway, see [Illustration 9](#ill9).
-
-<a id="ill9">Illustration 9</a>
-
-![Illustration 9](./UML/LoggingFSIO/fsio_lib_logging_fsio_duallogger_disablefilelogging.png)
+![Illustration 9](../UML/LoggingFSIO/fsio_lib_logging_fsio_duallogger_disablefilelogging.png)
 
 The file logging can be enabled / disabled for each of the logger in the hierarchy independently, since the expected '*modus operandi*' is that each instance of the **DualLogger** class uses own file to log in. It is convenient that each 'child' logger maintains own log file, where specific events are registered, for instance, originating from a specific class / method or function, whereas the 'parent' logger aggregates all relevant events in a single log file.
 
-Finally, the log file can be changed at any time using the instance method **changeLogFile**(), see [Illustration 10](#ill10). As in the case of the instantiation, the desired name of the file can be passed as the optional argument; otherwise the file name is constructed automatically form the current date-time stamp and the name assigned to the logger object.
+Finally, the log file can be changed at any time using the instance method **changeLogFile**(). As in the case of the instantiation, the desired name of the file can be passed as the optional argument; otherwise the file name is constructed automatically form the current date-time stamp and the name assigned to the logger object.
 
-<a id="ill10">Illustration 10</a>
-
-![Illustration 10](./UML/LoggingFSIO/fsio_lib_logging_fsio_duallogger_changelogfile.png)
+![Illustration 10](../UML/LoggingFSIO/fsio_lib_logging_fsio_duallogger_changelogfile.png)
 
 The class **LoggingFSIO** is implemented as a *Singleton*: all its methods are *class methods*; therefore, it can be used without instantiation. Its I/O methods wrap the calls to the Standard Python Library I/O functions in **try:...except (IOError, OSError):** construct and transforms the raised I/O related exceptions into the error codes (integer) and messages (string), which are returned and, optionally, logged into the console and / or log file. In order to implement logging, an instance of the **DualLogger** class is referenced by a 'private' class data attribute (field). It also performs sanity checks on the arguments passed to its I/O methods.
 
-The method **makeDirs**(), see [Illustration 11](#ill11), attempts to create all missing (sub-) folders down to the target one, unless it already exists. The functional logic of this method is:
+The method **makeDirs**() attempts to create all missing (sub-) folders down to the target one, unless it already exists. The functional logic of this method is:
 
-* Input argument (path) is not a string -> **ERROR** message + no chages in the file system
-* Target folder already exists -> **DEBUG** message + no chages in the file system
+* Input argument (path) is not a string -> **ERROR** message + no changes in the file system
+* Target folder already exists -> **DEBUG** message + no changes in the file system
 * **IOError** or **OSError** is raised -> **ERROR** message + file system may be changed
 * No I/O related exceptions but the target folder is not created -> **ERROR** message + file system may be changed
 * Target folder is created -> **INFO** message + the desired change to the file system is applied
 
-<a id="ill11">Illustration 11</a>
+![Illustration 11](../UML/LoggingFSIO/fsio_lib_logging_fsio_loggingfsio_makedirs.png)
 
-![Illustration 11](./UML/LoggingFSIO/fsio_lib_logging_fsio_loggingfsio_makedirs.png)
-
-The method **copyFile**(), see [Illustration 12](#ill12), attempts to copy a file from the source folder into the target folder preserving its metadata. It is possible to change the base name (rename) of the file as well. The source and the target folders can also be the same. The functional logic of this method is:
+The method **copyFile**() attempts to copy a file from the source folder into the target folder preserving its metadata. It is possible to change the base name (rename) of the file as well. The source and the target folders can also be the same. The functional logic of this method is:
 
 * Source path argument is not a string -> **ERROR** message + no changes to the file system
 * Source path argument does not references a file -> **ERROR** message + no changes to the file system
@@ -168,20 +136,18 @@ The method **copyFile**(), see [Illustration 12](#ill12), attempts to copy a fil
 * Target folder argument is neither None nor a string -> **ERROR** message + no changes to the file system
 * New base name argument is neither None nor a string -> **ERROR** message + no changes to the file system
 * If target folder argument is provided (string) -> create all missing (sub-) folders along this path using **makeDirs**() method
-  - if failed -> **ERROR** message + possible changes in the files structure
+  * if failed -> **ERROR** message + possible changes in the files structure
 * If the target folder is not provided (None) -> use the source folder as the target
-* If the new base name is provided (string) form the targer path as the target folder + new base name; otherwise as the target folder + old base name
-  - If the source and the target files are exactly the same -> **WARNING** message + no changes in the file system
+* If the new base name is provided (string) form the target path as the target folder + new base name; otherwise as the target folder + old base name
+  * If the source and the target files are exactly the same -> **WARNING** message + no changes in the file system
 * Try to copy the file from the source path to the target path preserving the metadata; existing file is overwritten
 * **IOError** or **OSError** is raised -> **ERROR** message + file system may be changed
 * No I/O related exceptions but the target file is not found -> **ERROR** message + file system may be changed
 * Target file is found -> **INFO** message + the desired change to the file system is applied
 
-<a id="ill12">Illustration 12</a>
+![Illustration 12](../UML/LoggingFSIO/fsio_lib_logging_fsio_loggingfsio_copyfile.png)
 
-![Illustration 12](./UML/LoggingFSIO/fsio_lib_logging_fsio_loggingfsio_copyfile.png)
-
-The method **deleteFile**(), see [Illustration 13](#ill13), attempts to delete a file by the provided path to it. The functional logic of this method is:
+The method **deleteFile**() attempts to delete a file by the provided path to it. The functional logic of this method is:
 
 * Target path argument is not a string -> **ERROR** message + no changes to the file system
 * Target file does not exist -> **ERROR** message + no changes to the file system
@@ -190,30 +156,26 @@ The method **deleteFile**(), see [Illustration 13](#ill13), attempts to delete a
 * Target file still exists -> **ERROR** message + file system is not changed
 * Target file is deleted -> **INFO** message + the desired change to the file system is applied
 
-<a id="ill13">Illustration 13</a>
+![Illustration 13](../UML/LoggingFSIO/fsio_lib_logging_fsio_loggingfsio_deletefile.png)
 
-![Illustration 13](./UML/LoggingFSIO/fsio_lib_logging_fsio_loggingfsio_deletefile.png)
-
-The method **moveFile**(), see [Illustration 14](#ill14), attempts to move a file specified by the source path to a new location specified by the target folder and / or new base name by first copying the original file into the new location (preserving the metadata) and then deleting the original file. If the new base name is provided, and it is not the same as the original base name, the file is also renamed. Thus, the functional logic of this method combines those of the methods **copyFile**() and **deleteFile**(), except that the target path has to be specified always (cannot be None):
+The method **moveFile**() attempts to move a file specified by the source path to a new location specified by the target folder and / or new base name by first copying the original file into the new location (preserving the metadata) and then deleting the original file. If the new base name is provided, and it is not the same as the original base name, the file is also renamed. Thus, the functional logic of this method combines those of the methods **copyFile**() and **deleteFile**(), except that the target path has to be specified always (cannot be None):
 
 * Source path argument is not a string -> **ERROR** message + no changes to the file system
 * Source path argument does not references a file -> **ERROR** message + no changes to the file system
 * Target folder argument is not a string -> **ERROR** message + no changes to the file system
 * New base name argument is neither None nor a string -> **ERROR** message + no changes to the file system
-* If the new base name is provided (string) form the targer path as the target folder + new base name; otherwise as the target folder + old base name
-  - If the source and the target files are exactly the same -> **WARNING** message + no changes in the file system
+* If the new base name is provided (string) form the target path as the target folder + new base name; otherwise as the target folder + old base name
+  * If the source and the target files are exactly the same -> **WARNING** message + no changes in the file system
 * Try to copy the file from the source path to the target path using the **copyFile**() method
 * The **copyFile**() method returns an error -> **ERROR** message + file system may be changed
 * No errors ('Ok' status 0 is returned) -> the new file is created + **DEBUG** message
-  - Delete the original file using **deleteFile**() method
-  - No errors ('Ok' status 0 is returned) -> the original file is deleted + **DEBUG** message
-  - Any error status + message are returned -> **ERROR** mesage + the original file is not deleted
+  * Delete the original file using **deleteFile**() method
+  * No errors ('Ok' status 0 is returned) -> the original file is deleted + **DEBUG** message
+  * Any error status + message are returned -> **ERROR** message + the original file is not deleted
 
-<a id="ill14">Illustration 14</a>
+![Illustration 14](../UML/LoggingFSIO/fsio_lib_logging_fsio_loggingfsio_movefile.png)
 
-![Illustration 14](./UML/LoggingFSIO/fsio_lib_logging_fsio_loggingfsio_movefile.png)
-
-Finally, the  method **renameFile**(), see [Illustration 15](#ill15), attempts to rename a file specified by the source path by giving it a new base name, whilst it remains in the original source folder. Basically, it is a special case of the **moveFile**() method, with the target and source folders being the same. Its finctional logic is:
+Finally, the  method **renameFile**() attempts to rename a file specified by the source path by giving it a new base name, whilst it remains in the original source folder. Basically, it is a special case of the **moveFile**() method, with the target and source folders being the same. Its functional logic is:
 
 * Source path argument is not a string -> **ERROR** message + no changes to the file system
 * Source path argument does not references a file -> **ERROR** message + no changes to the file system
@@ -221,15 +183,13 @@ Finally, the  method **renameFile**(), see [Illustration 15](#ill15), attempts t
 * New base name argument is not a proper base name of a file -> **ERROR** message + no changes to the file system
 * Extract the source folder from the source path -> use it as the target folder for the **moveFile**() method
 * No errors ('Ok' status 0 is returned) -> the file is renamed + **DEBUG** message
-* Any error status + message are returned -> **ERROR** mesage + either no changes to the file system, or the 'renamed' file is created but the original is not deleted
+* Any error status + message are returned -> **ERROR** message + either no changes to the file system, or the 'renamed' file is created but the original is not deleted
 
-<a id="ill15">Illustration 15</a>
+![Illustration 15](../UML/LoggingFSIO/fsio_lib_logging_fsio_loggingfsio_renamefile.png)
 
-![Illustration 15](./UML/LoggingFSIO/fsio_lib_logging_fsio_loggingfsio_renamefile.png)
+All I/O methods but **makeDirs**() results in the sanity checks being performed at least twice: in the method itself and in another I/O method it calls. This approach increases the amount of the overhead, since some checks on the same data are performed more than once with the already known positive outcome. However, this approach has an advantage, that the obvious problems, like the improper input arguments, is caught as soon as possible. The benefits are:
 
-All I/O methods but **makeDirs**() results in the sanity checks being performed at least twice: in the method itself and in another I/O method it calls. This approach increases the amount of the overhead, since some checks on the same data are performed more than once with the already known positive outcome. However, this approach has an advantage, that the obvious problems, like the improper input arguments, is caught as soon as possible. The benfits are:
-
-* minimalization of the changes introduced to the file system in the case of a failed operation
+* minimization of the changes introduced to the file system in the case of a failed operation
 * easier 'debugging' / tracing of the problem using the generated log messages
 
 For instance, the **moveFile**() method is called with proper target folder (path to it), which does not exist yet, but with improper source path (e.g., not a string, or not existing file). Basically, the normal call chain is **moveFile**() --> **copyFile**() + **deleteFile**() => (**copyFile**() --> **makeDirs**()) + **deleteFile**(). If each method performs only the sanity checks, which it cannot delegate to the other method it calls, and performs the said checks only before the critical operation, it is possible to discover the improper source path only after the creation of all missing folders along the target folder path. So, some empty (sub-) folders can be created, whereas the file will not be moved at all. Furthermore, in such a case the error message will be issued by the **copyFile**() method, not the **moveFile**() method, which can be confusing while tracking the source of the error.
@@ -253,10 +213,10 @@ Due to the implementation of the 'virtual inheritance' the behavior of the funct
 
 The default settings for the logging by the **LoggingFSIO** class are:
 
-* The overal logging severity level (of the logger) is **logging.DEBUG**
+* The overall logging severity level (of the logger) is **logging.DEBUG**
 * The logging severity level of the console handler is **logging.INFO** and the console logging is enabled
 * The logging severity level of the file handler is **logging.WARNING** and the file logging is disabled
-* The default base name of the log file is "{YYYY}-{MM}-{DD} {HH}\_{mm}\_{ss}\_LoggingFSIO.log", where values in {} are palceholders for the date and time stamp parts, e.g. "2018-10-18 09\_41\_10\_LoggingFSIO.log"; and the file is created in the current working directory when file logging is enabled even if no log entries were issued.
+* The default base name of the log file is "{YYYY}-{MM}-{DD} {HH}\_{mm}\_{ss}\_LoggingFSIO.log", where values in {} are place-holders for the date and time stamp parts, e.g. "2018-10-18 09\_41\_10\_LoggingFSIO.log"; and the file is created in the current working directory when file logging is enabled even if no log entries were issued.
 
 This default behaviour can be changed using the *wrapper* methods of the **LoggingFSIO** class at any moment.
 
@@ -451,7 +411,7 @@ Implementation details:
 * has a hidden 'dummy' handler of NullHandler class, thus the both real handlers can be disabled without complains from the logging functionality
 * actual log file is not created / re-opened until the file logging is enabled implicitly (or by setting the flag to True during the instantiation)
 * call to the method changeLogFile() automatically enables the file logging, thus log file is created / re-opened
-* the log files are created / re-opened in the 'w' mode, thus clearing their previous content, but disabling / suppressing of the file logging doesn't actually closes the log file, therefore the reenabling of the file logging doesn't delete the previously made entries
+* the log files are created / re-opened in the 'w' mode, thus clearing their previous content, but disabling / suppressing of the file logging doesn't actually closes the log file, therefore the re-enabling of the file logging doesn't delete the previously made entries
 
 The default format is:
 
@@ -554,7 +514,7 @@ Method to change the active log file. If logging to a file was disabled this met
 
 If optional file name is not passed, it is defined automatically from the current date and time as well as the 'name' of the logger instance with the extension '.log'. Note that in this case the log file is created in the current working directory.
 
-#### Instance Methods - Inhertited
+#### Instance Methods - Inherited
 
 **enableConsoleLogging**()
 

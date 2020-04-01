@@ -2,7 +2,7 @@
 """
 Module Tests.ut004_generic_parsers
 
-Implements unit testing of the module GenericParsers. Test ID - UT004
+Implements unit testing of the module GenericParsers. See test report TE006.
 """
 
 __version__ = "0.1.0.1"
@@ -60,7 +60,8 @@ class Test_GenericParser(unittest.TestCase):
     """
     Test cases for the class GenericParser of the module GenericParsers.
     
-    Test ID - UT004.1
+    Test IDs - TEST-T-600, TEST-T-601, TEST-T-602, TEST-T-603, TEST-T-604,
+    TEST-T-605, TEST-T-606 and TEST-T-607.
     """
     
     TestID = "ut004_1"
@@ -87,7 +88,7 @@ class Test_GenericParser(unittest.TestCase):
         is provided (explicit or default None value) and it cannot be guessed by
         the file content.
         
-        Test ID - UT004.1.1
+        Test ID - TEST-T-600. Covers requirements REQ-AWM-600.
         """
         strFile = os.path.join(self.InFolder, self.DummyFileZero)
         with self.assertRaises(ValueError):
@@ -103,7 +104,7 @@ class Test_GenericParser(unittest.TestCase):
         and method parseManyFiles() must raise TypeError if either the folder
         name or any of the file names are not a string.
         
-        Test ID - UT004.1.2
+        Test ID - TEST-T-601. Covers requirements REQ-AWM-601.
         """
         for Name in self.NotStringNames:
             with self.assertRaises(TypeError):
@@ -122,7 +123,7 @@ class Test_GenericParser(unittest.TestCase):
         parseManyFiles() also raises ValueError if the folder path argument does
         not point to an existing folder.
         
-        Test ID - UT004.1.3
+        Test ID - TEST-T-602. Covers requirements REQ-AWM-602.
         """
         strFile = os.path.join(self.InFolder, 'foo_bar.baz')
         with self.assertRaises(ValueError):
@@ -139,7 +140,7 @@ class Test_GenericParser(unittest.TestCase):
         Methods parseSingleObject(), parseFile() and parseManyFiles() raise
         TypeError if the template agrument is not a template (but not None).
         
-        Test ID - UT004.1.4
+        Test ID - TEST-T-603. Covers requirements REQ-AWM-603.
         """
         lstTests = [1, 1.0, True, "a", ["a"], int, float, bool, list, tuple]
         strFile = os.path.join(self.InFolder, self.DummyFile)
@@ -160,7 +161,7 @@ class Test_GenericParser(unittest.TestCase):
         ValueError if the template does not have the key 'DataMapping' or the
         value bound to this key is not a dictionary.
         
-        Test ID - UT004.1.5
+        Test ID - TEST-T-604. Covers requirements REQ-AWM-604.
         """
         strFile = os.path.join(self.InFolder, self.DummyFile)
         with self.assertRaises(ValueError):
@@ -193,7 +194,7 @@ class Test_GenericParser(unittest.TestCase):
         bStrictTarget flags. Note, the parseFile() and parseManyFiles() methods
         are checked only with the derived test clases, not this one.
         
-        Test ID - UD004.1.6
+        Test ID - TEST-T-605. Covers requirements REQ-AWM-605.
         """
         strFile = os.path.join(self.InFolder, self.DummyFile)
         #bad target path elements
@@ -243,7 +244,7 @@ class Test_GenericParser(unittest.TestCase):
         but the corresponding element of the target object is not changed but
         remains at its initial value.
         
-        Test ID - UT004.1.7
+        Test ID - TEST-T-606. Covers requirements REQ-AWM-606 and REQ-FUN-604.
         """
         clsTarget = HelperClass
         objSource = dict()
@@ -265,7 +266,7 @@ class Test_GenericParser(unittest.TestCase):
         bForceTarget is True - the missing element is created and the proper
         value is assigned to it.
         
-        Test ID - UT004.1.8
+        Test ID - TEST-T-607. Covers requirements REQ-AWM-607 and REQ-FUN-604.
         """
         clsTarget = HelperClass
         objSource = {"a" : 1}
@@ -289,7 +290,8 @@ class Test_TSV_Parser(Test_GenericParser):
     """
     Test cases for the class TSV_Parser of the module GenericParsers.
     
-    Test ID - UT004.2
+    Test IDs - TEST-T-600, TEST-T-601, TEST-T-602, TEST-T-603, TEST-T-604,
+    TEST-T-605, TEST-T-606, TEST-T-607, TEST-T-608, TEST-T-609 and TEST-T-60A.
     """
     
     TestID = "ut004_2"
@@ -322,7 +324,8 @@ class Test_TSV_Parser(Test_GenericParser):
         first object returned is tested in terms of its content. The target
         class and the mapping dictionary are provided explicitly.
         
-        Test ID - UT004.2.9
+        Test ID - TEST-T-606 part 2. Covers requirements REQ-AWM-606 and
+        REQ-FUN-604.
         """
         strFile = os.path.join(self.InFolder, self.DummyFile)
         clsTarget = HelperClass
@@ -358,7 +361,8 @@ class Test_TSV_Parser(Test_GenericParser):
         (explicit or default) value of the flag bStrictTarget in this case is
         treated as True.
         
-        Test ID - UT004.2.10
+        Test ID - TEST-T-607 part 2. Covers requirements REQ-AWM-607 and
+        REQ-FUN-604.
         """
         strFile = os.path.join(self.InFolder, self.DummyFile)
         clsTarget = HelperClass
@@ -430,7 +434,7 @@ class Test_TSV_Parser(Test_GenericParser):
         provided explicitely, and the mapping matches the structure of the both
         source and target objects.
         
-        Test ID - UT004.2.11
+        Test ID - TEST-T-608. Covers requirements REQ-FUN-600.
         """
         strFile = os.path.join(self.InFolder, self.DummyFile)
         lstResult = self.TestClass.parseFile(strFile,
@@ -467,7 +471,7 @@ class Test_TSV_Parser(Test_GenericParser):
         target class (type) is not provided, but taken from the template. All
         flags are left at their default values.
         
-        Test ID - UT004.2.12
+        Test ID - TEST-T-609. Covers requirements REQ-FUN-600 and REQ-FUN-602.
         """
         dictTemplate = copy.deepcopy(self.Template)
         dictTemplate["TargetClassModule"] = 'fsio_lib.Tests.ut004_helper_class'
@@ -507,7 +511,7 @@ class Test_TSV_Parser(Test_GenericParser):
         specified **True** or **False** values of this flag should not be
         modified in any of the cases.
         
-        Test ID - UT0004.2.13
+        Test ID - TEST-T-60A. Covers requirements REQ-FUN-604.
         """
         dictTemplate = copy.deepcopy(self.Template)
         dictTemplate["TargetClassModule"] = 'fsio_lib.Tests.ut004_helper_class'
@@ -614,7 +618,9 @@ class Test_JSON_Parser(Test_TSV_Parser):
     """
     Test cases for the class JSON_Parser of the module GenericParsers.
     
-    Test ID - UT004.3
+    Test IDs - TEST-T-600, TEST-T-601, TEST-T-602, TEST-T-603, TEST-T-604,
+    TEST-T-605, TEST-T-606, TEST-T-607, TEST-T-608, TEST-T-609, TEST-T-60A,
+    TEST-T-60B and TEST-T-610.
     """
     
     TestID = "ut004_3"
@@ -649,7 +655,7 @@ class Test_JSON_Parser(Test_TSV_Parser):
         improper formed JSON as '{} {}' or '{}, {}' instead of '[{}, {}]' are
         treated as lists of dictionaries as well.
         
-        Test ID - UT004.3.11
+        Test ID - TEST-T-608. Covers requirements REQ-FUN-600.
         """
         strFile = os.path.join(self.InFolder, self.DummyFile)
         lstResult = self.TestClass.parseFile(strFile,
@@ -688,7 +694,7 @@ class Test_JSON_Parser(Test_TSV_Parser):
         cases of the improper formed JSON as '{} {}' or '{}, {}' instead of
         '[{}, {}]' are treated as lists of dictionaries as well.
         
-        Test ID - UT004.3.12
+        Test ID - TEST-T-609. Covers requirements REQ-FUN-600 and REQ-FUN-602.
         """
         dictTemplate = copy.deepcopy(self.Template)
         dictTemplate["TargetClassModule"] = 'fsio_lib.Tests.ut004_helper_class'
@@ -723,7 +729,7 @@ class Test_JSON_Parser(Test_TSV_Parser):
         source data file is not a proper format JSON, excluding the cases of
         '{} {}' or '{}, {}' instead of '[{}, {}]'.
         
-        Test ID - UT004.3.14
+        Test ID - TEST-T-610. Covers requirements REQ-AWM-610.
         """
         strFile = os.path.join(self.InFolder, self.BadFile)
         with self.assertRaises(ValueError):
@@ -743,7 +749,7 @@ class Test_JSON_Parser(Test_TSV_Parser):
         provided, but the required template can be selected on the basis of the
         source file content.
         
-        Test ID - UT004.3.15
+        Test ID - TEST-T-60B. Covers requirements REQ-FUN-603.
         """
         strFile = os.path.join(self.InFolder, self.DummyFile)
         lstResult = self.TestClass.parseFile(strFile, objLogger = self.Logger)
@@ -773,7 +779,9 @@ class Test_XML_Parser(Test_JSON_Parser):
     """
     Test cases for the class XML_Parser of the module GenericParsers.
     
-    Test ID - UT004.4
+    Test IDs - TEST-T-600, TEST-T-601, TEST-T-602, TEST-T-603, TEST-T-604,
+    TEST-T-605, TEST-T-606, TEST-T-607, TEST-T-608, TEST-T-609, TEST-T-60A,
+    TEST-T-60B and TEST-T-620.
     """
     
     TestID = "ut004_4"
@@ -805,7 +813,7 @@ class Test_XML_Parser(Test_JSON_Parser):
         provided explicitely, and the mapping matches the structure of the both
         source and target objects.
         
-        Test ID - UT004.4.11
+        Test ID - TEST-T-608. Covers requirements REQ-FUN-600.
         """
         strFile = os.path.join(self.InFolder, self.DummyFile)
         lstResult = self.TestClass.parseFile(strFile,
@@ -842,7 +850,7 @@ class Test_XML_Parser(Test_JSON_Parser):
         target class (type) is not provided, but taken from the template. All
         flags are left at their default values.
         
-        Test ID - UT004.4.12
+        Test ID - TEST-T-609. Covers requirements REQ-FUN-600 and REQ-FUN-602.
         """
         dictTemplate = copy.deepcopy(self.Template)
         dictTemplate["TargetClassModule"] = 'fsio_lib.Tests.ut004_helper_class'
@@ -877,7 +885,7 @@ class Test_XML_Parser(Test_JSON_Parser):
         xml.etree.ElementTree.ParseError if the source data file is not a proper
         format XML.
         
-        Test ID - UT004.4.14
+        Test ID - TEST-T-620. Covers requirements REQ-AWM-620.
         """
         strFile = os.path.join(self.InFolder, self.BadFile)
         with self.assertRaises(ParseError):
@@ -892,7 +900,7 @@ class Test_parseFile(unittest.TestCase):
     """
     Test cases for the function parseFile() of the module GenericParsers.
     
-    Test ID - UT004.5
+    Test ID - TEST-T-601, TEST-T-602, TEST-T-60C.
     """
     
     TestID = "ut004_5"
@@ -916,7 +924,7 @@ class Test_parseFile(unittest.TestCase):
         """
         Function parseFile() raises TypeError if the file name is not a string.
         
-        Test ID - UT004.5.1
+        Test ID - TEST-T-601. Covers requirements REQ-AWM-601.
         """
         for Name in self.NotStringNames:
             with self.assertRaises(TypeError):
@@ -927,7 +935,7 @@ class Test_parseFile(unittest.TestCase):
         Function parseFile() raises ValueError if the file path does not point
         to an existing file.
         
-        Test ID - UT004.5.2
+        Test ID - TEST-T-602. Covers requirements REQ-AWM-602.
         """
         strFile = os.path.join(self.InFolder, 'foo_bar.baz')
         with self.assertRaises(ValueError):
@@ -940,7 +948,8 @@ class Test_parseFile(unittest.TestCase):
         and return the proper container object with the proper type elements,
         filled with the data from the source file as expected.
         
-        Test ID - UT004.5.3
+        Test ID - TEST-T-60C. Covers the requirements REQ-FUN-601, REQ-FUN-602
+        and REQ-FUN-603.
         """
         for strFileName in self.Files:
             strFile = os.path.join(self.InFolder, strFileName)
@@ -958,7 +967,7 @@ class Test_parseManyFiles(unittest.TestCase):
     """
     Test cases for the function parseManyFiles() of the module GenericParsers.
     
-    Test ID - UT004.6
+    Test ID - TEST-T-601, TEST-T-602, TEST-T-60C.
     """
     
     TestID = "ut004_6"
@@ -983,7 +992,7 @@ class Test_parseManyFiles(unittest.TestCase):
         Function parseManyFiles() raises TypeError if the folder name is not a
         string or, at least, one base file name is not a string.
         
-        Test ID - UT004.6.1
+        Test ID - TEST-T-601. Covers requirements REQ-AWM-601.
         """
         for Name in self.NotStringNames:
             with self.assertRaises(TypeError):
@@ -997,7 +1006,7 @@ class Test_parseManyFiles(unittest.TestCase):
         point to an existing file, for any of the base names, which includes the
         path to their folder not pointing to an existing folder.
         
-        Test ID - UT004.6.2
+        Test ID - TEST-T-602. Covers requirements REQ-AWM-602.
         """
         strFile = os.path.join(self.InFolder, 'foo_bar.baz')
         with self.assertRaises(ValueError):
@@ -1014,7 +1023,8 @@ class Test_parseManyFiles(unittest.TestCase):
         the proper type elements, filled with the data from the source file as
         expected.
         
-        Test ID - UT004.6.3
+        Test ID - TEST-T-60C. Covers the requirements REQ-FUN-601, REQ-FUN-602
+        and REQ-FUN-603.
         """
         odResult = self.TestFunction(self.InFolder, self.Files,
                                                         objLogger = self.Logger)

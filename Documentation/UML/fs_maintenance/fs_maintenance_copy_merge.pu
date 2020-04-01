@@ -1,0 +1,30 @@
+@startuml fs_maintenance_copy_merge
+
+title Activity Diagram of the Function fsio_lib.fs_maintenance.CopyMerge()
+
+start
+
+:<b>Source</b> - string, path to the 'source' directory
+<b>Target</b> - string, path to the 'target' directory<
+
+if (<b>Target</b> folder exists?) then (Yes)
+    while (for each (nested) sub-folder in <b>Source</b>)
+        if (there are files in it?) then (Yes)
+            if (<b>Target</b> does not have such sub-folder?) then (True)
+                :Create the corresponding sub-folder in <b>Target</b> ;
+            endif
+
+            while (for each file in the <b>Source</b>'s sub-folder)
+                :Copy file into the corresponding sub-folder in <b>Target</b>\nunless it is already present there, see SmartCopy();
+            end while
+        endif
+    end while (Done)
+
+    :Remove empty sub-folders, see RemoveEmptySubfolders()|
+else (No)
+    :Copy the enitre content of <b>Source</b>\nusing shutils.copytree() function;
+endif
+
+stop
+
+@enduml

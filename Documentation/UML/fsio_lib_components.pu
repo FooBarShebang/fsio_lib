@@ -1,17 +1,21 @@
 @startuml fsio_lib_components
 
 !ifndef GENERAL
-!include ./Templates/General_templates.cuml
+!include ./Templates/General.cuml
 !endif
 
 !ifndef COMPONENTS
 !include ./Templates/Components.cuml
 !endif
 
-title Components Diagram of the Library fsio_lib. GENERATED
+title Components Diagram of the Library fsio_lib
+
+!ifndef FSMAINTENANCE
+!include ./fs_maintenance/fs_maintenance_module.iuml
+!endif
 
 !ifndef GENERICPARSERS
-!include ./GenericParsers/GenericParsers.iuml
+!include ./GenericParsers/fsio_lib_generic_parsers_components.iuml
 !endif
 
 !ifndef STRUCTUREMAPPING
@@ -75,5 +79,7 @@ Generic_Parser -down-> Templates  : uses
 MapValues -[hidden]- [TSV templates]
 
 TSV_Parser --> LoadTable : uses
+
+locale_fsio --[hidden]-- fs_maintenance
 
 @enduml

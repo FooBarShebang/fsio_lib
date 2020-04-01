@@ -1,16 +1,8 @@
-# UD004 Reference on the Module fsio_lib.dynamic_import
-
-## Table of Content
-
-* [Scope](#Scope)
-* [Intended Functionality and Use](#Intended-Functionality-and-Use)
-* [Design and Implementation](#Design-and-Implementation)
-* [Usage](#Usage)
-* [API Reference](#API-Reference)
+# UD002 Reference on the Module fsio_lib.dynamic_import
 
 ## Scope
 
-This document describes the design, intended usage, implementation details and API of the module *dynamic_import*,  which implements a number of functions for dynamic import either of an entire module or a specific function / class, etc. from a module.
+This document describes the design, intended usage, implementation details and API of the module *dynamic_import*, which implements a number of functions for dynamic import either of an entire module or a specific function / class, etc. from a module.
 
 The implemented functions:
 
@@ -25,18 +17,18 @@ The Standard Python Library provides ready solution – the module **importlib**
 
 There are four principal import constructs:
 
-* **import** some.module
-* **import** some.module **as** alias
-* **from** some.module **import** some_object
-* **from** some.module **import** some_object **as** alias
+* import some.module
+* import some.module as alias
+* from some.module import some_object
+* from some.module import some_object as alias
 
-The first two statements are designed for the import of the entire module into the current namespace, whereas the last two statements import only a single object from other module into the current namespace. “Under the hood”, however, the entire module is loaded into the interpreter’s environment as well as all other modules it imports itself, and, for the modules within packages, the ‘\_\_init\_\_.py’ modules of the corresponding ‘parent’ packages. The difference is only in which object is referenced in the globals table of the current namespace after the operation.
+The first two statements are designed for the import of the entire module into the current name-space, whereas the last two statements import only a single object from other module into the current name-space. “Under the hood”, however, the entire module is loaded into the interpreter’s environment as well as all other modules it imports itself, and, for the modules within packages, the ‘\_\_init\_\_.py’ modules of the corresponding ‘parent’ packages. The difference is only in which object is referenced in the globals table of the current name-space after the operation.
 
 In the first case the top parent package containing the module is referenced in the globals table, e.g., if the module **some_module** is in the sub-package **sub_package** of the package **some_package**, i.e. **some_package.sub_package.some_module** – the reference to *some_package/\_\_init\_\_.py* module is created in the globals table under the name *some_package*. But the required module itself is accessible as (nested) attribute of the ‘module-type’ object **some_package** using dot-notation. If the module is ‘standing-alone’ (not a part of a package), the reference to the module itself is created in the global table using its original name as the reference name.
 
 In the second case the reference to the required module is created always even if the module is a part of a package, but an *alias* is used as the reference’s name.
 
-In the last two cases the reference to a specific object defined within the imported module is created in the globals table of the current namespace using either its original name or the provided *alias* as the name of the created reference.
+In the last two cases the reference to a specific object defined within the imported module is created in the globals table of the current name-space using either its original name or the provided *alias* as the name of the created reference.
 
 In all four cases the required module itself is accessible directly via reference stored in the dictionary **sys.modules**.
 
@@ -46,30 +38,26 @@ The functions implemented within the module **dynamic_import** call the **import
 
 ## Design and Implementation
 
-The function **import_module**() operates as shown in [Illustration 1](#ill1):
+The function **import_module**() operates following the rules below:
 
 * the sanity checks is performed on the input arguments; the **TypeError** exception is raised if any of the provided arguments is of the wrong type
-* the required module with all its dependencies is imported into the interpreter’s enviroment by means of the function **importlib.import_module**()
+* the required module with all its dependencies is imported into the interpreter’s environment by means of the function **importlib.import_module**()
 * If the ‘globals’ table (dictionary) is passed as the optional (keyword) argument, the reference will be created in that dictionary; otherwise the reference will be placed into the global names table of the module **dynamic_import**
 * If alias is provided (as the optional argument) it is used as the name of the reference, which points to the module itself; otherwise the reference to the top parent package (the first name in the dot notation of the requested module) is created, using the name of the top parent package as the reference’s name
 * The reference to the imported module (returned by the **importlib.import_module**() function) is returned, regardless of the name and value of the reference created in the ‘globals’ table
 
-<a id="ill1">Illustration 1</a>
+![Illustration 1](../UML/dynamic_import/dynamic_import_module.png)
 
-![Illustration 1](./UML/dynamic_import/dynamic_import_module.png)
-
-The function **import_from_module**() operates as shown in [Illustration 2](#ill2):
+The function **import_from_module**() operates as:
 
 * the sanity checks is performed on the input arguments; the **TypeError** exception is raised if any of the provided arguments is of the wrong type
-* the required module with all its dependencies is imported into the interpreter’s enviroment by means of the function **importlib.import_module**()
+* the required module with all its dependencies is imported into the interpreter’s environment by means of the function **importlib.import_module**()
 * the reference to the required object (defined within the imported module) is accessed using the built-in function **getattr**()
 * If the ‘globals’ table (dictionary) is passed as the optional (keyword) argument, the reference will be created in that dictionary; otherwise the reference will be placed into the global names table of the module **dynamic_import**
 * The reference to the ‘imported’ object is created in the ‘globals’ table using either its original name or the passed alias as the name of the reference
 * The reference to the ‘imported’ object is returned
 
-<a id="ill2">Illustration 2</a>
-
-![Illustration 2](./UML/dynamic_import/dynamic_import_from_module.png)
+![Illustration 2](../UML/dynamic_import/dynamic_import_from_module.png)
 
 ## Usage
 

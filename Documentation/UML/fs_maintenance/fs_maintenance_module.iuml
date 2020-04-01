@@ -1,0 +1,45 @@
+!define FSMAINTENANCE
+
+!ifndef COMPONENTS
+!include ../Templates/Components.cuml
+!endif
+
+module(fs_maintenance) {
+    function(CopyMerge)
+    
+    function(SmartCopy)
+    
+    function(TouchFolder)
+    
+    function(RemoveEmptyFolders)
+    
+    function(RenameSubFolders)
+    
+    CopyMerge --> RemoveEmptyFolders
+    
+    CopyMerge --> SmartCopy
+    
+    CopyMerge --> TouchFolder
+    
+    SmartCopy <-- RenameSubFolders
+    
+    TouchFolder <-- RenameSubFolders
+    
+    RemoveEmptyFolders <-- RenameSubFolders
+    
+    function(MakeFolderDictionary)
+    
+    MakeFolderDictionary -[hidden]right- RenameSubFolders
+    
+    function(RemoveDuplicateFiles)
+    
+    function(CopyNonPresent)
+    
+    MakeFolderDictionary <-- RemoveDuplicateFiles
+    
+    MakeFolderDictionary <-- CopyNonPresent
+    
+    function(RemoveFilesCopies)
+    
+    RenameSubFolders -[hidden]- RemoveFilesCopies
+}

@@ -1,7 +1,7 @@
 !define GENERICPARSERSJSONPARSER
 
 !ifndef CLASSES
-!include ../Templates/Class_templates.cuml
+!include ../Templates/Classes.cuml
 !endif
 
 class JSON_Parser <<SINGLETON>> {

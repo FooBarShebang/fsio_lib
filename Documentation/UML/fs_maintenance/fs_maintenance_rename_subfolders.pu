@@ -1,0 +1,39 @@
+@startuml fs_maintenance_rename_subfolders
+
+title Activity Diagram of the Function fsio_lib.fs_maintenance.RenameSubfolders()
+
+start
+
+:<b>Target</b> - string, path to a folder to be analyzed
+<b>NewName</b> - string, the name to assign to the sub-folders to be renamed
+<b>OldNames</b> - (optional) list of strings, base names of the sub-folders to be renamed<
+
+:Convert all names in <b>OldNames</b> list into lower case;
+
+:Create a list of paths to all sub-folders in the tree structure of <b>Target</b> folder including all nesting levels sorted by length - longest first;
+
+while (for each path in the paths' list)
+    :Determine the base name of the folder referenced by this path;
+    
+    if (Base name is <b>NewName</b> but in a different case OR\nits lower case form equals any name in the <b>OldNames</b> list?) then (True)
+        :Determine the 'parent' folder for the current path;
+
+        if (<b>NewName</b> sub-folder is present in the 'parent' folder?) then (Yes)
+            while (Walk the tree structure of the current 'source' sub-folder)
+                :Create all missing sub-folders in the 'target' folder;
+
+                :Copy preserving attributes all files from the 'source' folder,\nwhich are not present in the 'target' folder;
+
+                :Delete all files from the current 'source' folder;
+            end while (Done)
+        else (No)
+            :Raname the current folder, change the base name only;
+        endif
+    endif
+end while (Done)
+
+:Remove all empty sub-folders in <b>Target</b> - see function <b>RemoveEmptyFolders</b>()|
+
+stop
+
+@enduml

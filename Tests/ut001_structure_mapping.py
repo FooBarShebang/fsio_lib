@@ -2,7 +2,7 @@
 """
 Module fsio_lib.Tests.ut001_structure_mapping
 
-Implements unit testing of the module StructureMapping. Test ID - UT001
+Implements unit testing of the module StructureMapping. See test report TE001.
 """
 
 __version__ = "0.1.0.1"
@@ -113,7 +113,7 @@ class Test_FlattenPath(unittest.TestCase):
     """
     Test cases for the function FlattenPath of the module StructureMapping.
     
-    Test ID - UT001.1
+    Implements tests ID TEST-T-100, TEST-T-101, TEST-T-102.
     """
     
     @classmethod
@@ -161,7 +161,7 @@ class Test_FlattenPath(unittest.TestCase):
         Tests that the function raises TypeError exception if at least one
         element of the path is of inproper type.
         
-        Test ID - UT001.1.1
+        Test ID - TEST-T-100. Covers REQ-AWM-100.
         """
         for gItem in self.TestTypeError:
             with self.assertRaises(TypeError):
@@ -172,7 +172,7 @@ class Test_FlattenPath(unittest.TestCase):
         Tests that the function raises ValueError exception if at least one
         element of the path is of improper value.
         
-        Test ID - UT001.1.2
+        Test ID - TEST-T-101. Covers REQ-AWM-101.
         """
         for gItem in self.TestValueError:
             with self.assertRaises(ValueError):
@@ -183,7 +183,7 @@ class Test_FlattenPath(unittest.TestCase):
         Tests that the function returns the expected result with the proper
         input.
         
-        Test ID - UT001.1.3
+        Test ID - TEST-T-102. Covers REQ-FUN-100.
         """
         for gInput, gOutput in self.TestGoodCases:
             self.assertEqual(self.TestFunction(gInput), gOutput)
@@ -193,7 +193,7 @@ class Test_ResolvePathSubstitutions(unittest.TestCase):
     Test cases for the function ResolvePathSubstitutions of the module
     StructureMapping.
     
-    Test ID - UT001.2
+    Tests ID TEST-T-110, TEST-T-111, TEST-T-112.
     """
     
     @classmethod
@@ -219,7 +219,7 @@ class Test_ResolvePathSubstitutions(unittest.TestCase):
         Tests that the function raises ValueError exception if at least one
         pattern definition refers an undefined (in the same dictionary) pattern.
         
-        Test ID - UT001.2.1
+        Test ID - TEST-T-110. Covers REQ-AWM-111.
         """
         for dictPattern in self.UndefinedPatterns:
             with self.assertRaises(ValueError):
@@ -230,7 +230,7 @@ class Test_ResolvePathSubstitutions(unittest.TestCase):
         Tests that the function raises ValueError exception if at least one pair
         of pattern definitions mutually refers each other.
         
-        Test ID - UT001.2.2
+        Test ID - TEST-T-110. Covers REQ-AWM-111.
         """
         for dictPattern in self.CircularPatterns:
             with self.assertRaises(ValueError):
@@ -242,7 +242,7 @@ class Test_ResolvePathSubstitutions(unittest.TestCase):
         element of the path is of improper value. Uses test cases values from
         the Test_FlattenPath.TestValueError.
         
-        Test ID - UT001.2.3
+        Test ID - TEST-T-110. Covers REQ-AWM-101.
         """
         for gItem in Test_FlattenPath.TestValueError:
             dictTest = {"$1" : gItem}
@@ -255,7 +255,7 @@ class Test_ResolvePathSubstitutions(unittest.TestCase):
         key of the passed dictionary is a string, but it does not start with the
         '$' character.
         
-        Test ID - UT001.2.4
+        Test ID - TEST-T-110. Covers REQ-AWM-111.
         """
         dictTest = {"$1" : 'a', 'b' : 1}
         with self.assertRaises(ValueError):
@@ -270,7 +270,7 @@ class Test_ResolvePathSubstitutions(unittest.TestCase):
         element of the path isof improper type. Uses test cases values from
         the Test_FlattenPath.TestTypeError.
         
-        Test ID - UT001.2.5
+        Test ID - TEST-T-111. Covers REQ-AWM-100.
         """
         for gItem in Test_FlattenPath.TestTypeError:
             dictTest = {"$1" : gItem}
@@ -282,7 +282,7 @@ class Test_ResolvePathSubstitutions(unittest.TestCase):
         Tests that the function raises TypeError exception if at least one
         key of the passed dictionary is not a string.
         
-        Test ID - UT001.2.6
+        Test ID - TEST-T-111. Covers REQ-AWM-110.
         """
         for gKey in [1, 1.0, True, (2, "2"), int, float, str]:
             dictTest = {"$1" : 'a', gKey : 1}
@@ -294,7 +294,7 @@ class Test_ResolvePathSubstitutions(unittest.TestCase):
         Tests that the function raises TypeError exception if the passed
         argument is not a mapping type (dictionary).
         
-        Test ID - UT001.2.7
+        Test ID - TEST-T-111. Covers REQ-AWM-110.
         """
         for gType in [1, 1.0, True, (2, "2"), int, float, str, [1]]:
             with self.assertRaises(TypeError):
@@ -305,7 +305,7 @@ class Test_ResolvePathSubstitutions(unittest.TestCase):
         Tests that the function returns the properly resolved nested path
         substituion definitions.
         
-        Test ID - UT001.2.8
+        Test ID - TEST-T-112. Covers REQ-FUN-100, REQ-FUN-102.
         """
         for dictPattern, dictResult in self.ProperPatterns:
             self.assertDictEqual(self.TestFunction(dictPattern), dictResult)
@@ -314,7 +314,7 @@ class Test_GetElement(unittest.TestCase):
     """
     Test cases for the function GetElement of the module StructureMapping.
     
-    Test ID - UT001.3
+    Implements tests ID TEST-T-120, TEST-T-121, TEST-T-122, TEST-T-123.
     """
     
     @classmethod
@@ -347,7 +347,7 @@ class Test_GetElement(unittest.TestCase):
         element of the path is of improper type. Uses test cases values from
         the Test_FlattenPath.TestTypeError.
         
-        Test ID - UT001.3.1
+        Test ID - TEST-T-120. Covers requirement REQ-AWM-100.
         """
         for gTestObject in self.TestObjects:
             for gPath in Test_FlattenPath.TestTypeError:
@@ -360,7 +360,7 @@ class Test_GetElement(unittest.TestCase):
         element of the path is of improper value. Uses test cases values from
         the Test_FlattenPath.TestValueError.
         
-        Test ID - UT001.3.2
+        Test ID - TEST-T-121. Covers requirement REQ-AWM-101.
         """
         for gTestObject in self.TestObjects:
             for gPath in Test_FlattenPath.TestValueError:
@@ -372,7 +372,7 @@ class Test_GetElement(unittest.TestCase):
         Tests that the function raises AttributeError exception if at least one
         element of the path is not found.
         
-        Test ID - UT001.3.3
+        Test ID - TEST-T-122. Covers requirement REQ-AWM-102.
         """
         for gTestObject in self.TestObjects:
             for gPath in self.TestBadCases:
@@ -385,7 +385,7 @@ class Test_GetElement(unittest.TestCase):
         its value, with the numbers (floating point or integer) stored in a
         string being converted into float and int respectively.
         
-        Test ID - UT001.3.4
+        Test ID - TEST-T-123. Covers requirement REQ-FUN-101.
         """
         for gTestObject in self.TestObjects:
             for glstPath, gResult in self.TestGoodCases:
@@ -410,7 +410,7 @@ class Test_SetElement(unittest.TestCase):
     """
     Test cases for the function SetElement of the module StructureMapping.
     
-    Test ID - UT001.4
+    Implements tests ID TEST-T-130, TEST-T-131, TEST-T-132, TEST-T-133.
     """
     
     @classmethod
@@ -436,7 +436,7 @@ class Test_SetElement(unittest.TestCase):
         element of the path is of improper type. Uses test cases values from
         the Test_FlattenPath.TestTypeError.
         
-        Test ID - UT001.4.1
+        Test ID - TEST-T-130. Covers requirement REQ-AWM-100.
         """
         for gTestObject in self.TestObjects:
             for gPath in Test_FlattenPath.TestTypeError:
@@ -449,7 +449,7 @@ class Test_SetElement(unittest.TestCase):
         element of the path is of improper value. Uses test cases values from
         the Test_FlattenPath.TestValueError.
         
-        Test ID - UT001.4.2
+        Test ID - TEST-T-131. Covers requirement REQ-AWM-101.
         """
         for gTestObject in self.TestObjects:
             for gPath in Test_FlattenPath.TestValueError:
@@ -461,7 +461,7 @@ class Test_SetElement(unittest.TestCase):
         Tests that the function raises AttributeError exception if at least one
         element of the path is not found.
         
-        Test ID - UT001.4.3
+        Test ID - TEST-T-132. Covers requirement REQ-AWM-102.
         """
         for gTestObject in self.TestObjects:
             for gPath in self.TestMissingPaths:
@@ -476,7 +476,7 @@ class Test_SetElement(unittest.TestCase):
         sub-element of an XML node, or an immutable sequence as the last element
         is attempted to be modified. The path is proper.
         
-        Test ID - UT001.4.4
+        Test ID - TEST-T-130 - part 2. Covers requirement REQ-AWM-100.
         """
         gTestObject = TEST_ET_ELEMENT
         gPath = 'a' #assigning not a node to a node
@@ -522,7 +522,7 @@ class Test_SetElement(unittest.TestCase):
         intermediate nested attributes, as long as the path is proper and the
         conditions of the test UT0001.4.4 are not applicable (no type conflict).
         
-        Test ID - UT001.4.5
+        Test ID - TEST-T-133. Covers requirement REQ-FUN-101.
         """
         TestValue = 42
         #end nodes
@@ -586,7 +586,7 @@ class Test_DeleteElement(unittest.TestCase):
     """
     Test cases for the function DeleteElement of the module StructureMapping.
     
-    Test ID - UT001.5
+    Implements tests ID TEST-T-140, TEST-T-141, TEST-T-142, TEST-T-143.
     """
     
     @classmethod
@@ -607,7 +607,7 @@ class Test_DeleteElement(unittest.TestCase):
         element of the path is of improper type. Uses test cases values from
         the Test_FlattenPath.TestTypeError.
         
-        Test ID - UT001.5.1
+        Test ID - TEST-T-140. Covers requirement REQ-AWN-100.
         """
         for gTestObject in self.TestObjects:
             for gPath in Test_FlattenPath.TestTypeError:
@@ -620,7 +620,7 @@ class Test_DeleteElement(unittest.TestCase):
         element of the path is of improper value. Uses test cases values from
         the Test_FlattenPath.TestValueError.
         
-        Test ID - UT001.5.2
+        Test ID - TEST-T-141. Covers requirement REQ-AWN-101.
         """
         for gTestObject in self.TestObjects:
             for gPath in Test_FlattenPath.TestValueError:
@@ -632,7 +632,7 @@ class Test_DeleteElement(unittest.TestCase):
         Tests that the function raises AttributeError exception if at least one
         element of the path is not found.
         
-        Test ID - UT001.5.3
+        Test ID - TEST-T-142. Covers requirement REQ-AWN-102.
         """
         for gTestObject in self.TestObjects:
             for gPath in self.TestMissingPaths:
@@ -644,7 +644,7 @@ class Test_DeleteElement(unittest.TestCase):
         The function must perform proper deletion of the end and intermediate
         nested attributes.
         
-        Test ID - UT001.5.4
+        Test ID - TEST-T-143. Covers requirement REQ-FUN-101.
         """
         for gTestObject in self.TestObjects:
             for glstPath in self.TestGoodCases:
@@ -689,7 +689,7 @@ class Test_AddElement(unittest.TestCase):
     """
     Test cases for the function DeleteElement of the module StructureMapping.
     
-    Test ID - UT001.6
+    Implements tests ID TEST-T-150, TEST-T-151, TEST-T-152, TEST-T-153.
     """
     
     @classmethod
@@ -721,7 +721,7 @@ class Test_AddElement(unittest.TestCase):
         element of the path is of improper type. Uses test cases values from
         the Test_FlattenPath.TestTypeError.
         
-        Test ID - UT001.6.1
+        Test ID - TEST-T-150. Covers requirement REQ-AWN-100.
         """
         for gTestObject in self.TestObjects:
             for gPath in Test_FlattenPath.TestTypeError:
@@ -733,7 +733,7 @@ class Test_AddElement(unittest.TestCase):
         Tests that the function raises ValueError exception if at least one
         element of the path is of improper value.
         
-        Test ID - UT001.6.2
+        Test ID - TEST-T-151. Covers requirement REQ-AWN-101.
         """
         for gTestObject in self.TestObjects:
             for gPath in self.TestValueError:
@@ -751,7 +751,7 @@ class Test_AddElement(unittest.TestCase):
         conditions of the test UT0001.4.4 are not applicable (no type conflict),
         and the target attribute exists in the target object.
         
-        Test ID - UT001.6.3
+        Test ID - TEST-T-153. Covers requirement REQ-FUN-101.
         """
         TestValue = 42
         #end nodes
@@ -817,7 +817,7 @@ class Test_AddElement(unittest.TestCase):
         'choice' dictionary element is encountered in the 'missing' part of the
         path after the 'branching' point.
         
-        Test ID - UT001.6.4
+        Test ID - TEST-T-152. Covers requirement REQ-AWN-102.
         """
         TestValue = 42
         for gTestObject in self.TestObjects:
@@ -833,7 +833,7 @@ class Test_AddElement(unittest.TestCase):
         existing element along the path) is either not an XML node or an
         immutable object.
         
-        Test ID - UT001.6.5
+        Test ID - TEST-T-152 - part 2. Covers requirement REQ-AWN-102.
         """
         TestValue = 42
         #not XML node / end node (int) to append a branch
@@ -859,7 +859,7 @@ class Test_AddElement(unittest.TestCase):
         as a node as well if the passed values is a node itself, otherwise - the
         last element as the attribute name, and the passed value as its value.
         
-        Test ID - UT001.6.6
+        Test ID - TEST-T-153 - part 2. Covers requirement REQ-FUN-101.
         """
         glstMissingPath = "a.b.c"
         iValue = 42

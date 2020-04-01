@@ -1,14 +1,14 @@
 @startuml fsio_lib_logging_fsio_classes
 
 !ifndef GENERAL
-!include ../Templates/General_templates.cuml
+!include ../Templates/General.cuml
 !endif
 
 !ifndef CLASSES
-!include ../Templates/Class_templates.cuml
+!include ../Templates/Classes.cuml
 !endif
 
-title Class Diagram of the Module fsio_lib.LoggingFSIO. GENERATED
+title Class Diagram of the Module fsio_lib.LoggingFSIO
 
 !ifndef LOGGINGFSIO
 !include ./fsio_lib_logging_fsio_loggingfsio.iuml

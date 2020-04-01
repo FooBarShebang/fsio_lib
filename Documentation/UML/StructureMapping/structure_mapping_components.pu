@@ -1,10 +1,10 @@
 @startuml structure_mapping_components
 
 !ifndef GENERAL
-!include ../Templates/General_templates.cuml
+!include ../Templates/General.cuml
 !endif
 
-title Components Diagram of the Module fsio_lib.structure_mapping_components. GENERATED
+title Components Diagram of the Module fsio_lib.structure_mapping_components.
 
 !ifndef STRUCTUREMAPPING
 !include ./structure_mapping.iuml
